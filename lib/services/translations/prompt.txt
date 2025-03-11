@@ -1,0 +1,11 @@
+"": "App settings: change language, brightness and more",
+
+
+generate lines.json
+{
+    "fr": {},
+    "ar": {},
+    "en": {}
+}
+keys are the same for every language, treat them as variable names, and translate values
+do your thins

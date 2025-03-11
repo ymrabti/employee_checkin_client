@@ -1,0 +1,63 @@
+name: employee_checks
+description: The Employee Check-In app is a seamless and efficient attendance tracking system that enables employees and staff to check in and out using a QR code scanner. Upon scanning, the employee's photo and full name are instantly displayed on the screen for ver
+version: 1.0.0+1
+publish_to: "none"
+
+environment:
+    sdk: ^3.6.0
+
+dependencies:
+    flutter:
+        sdk: flutter
+    flutter_localizations:
+        sdk: flutter
+
+    # # #
+    cupertino_icons: ^1.0.8
+    flag: ^7.0.0
+    get: ^4.6.6
+    provider: ^6.1.2
+    flutter_screenutil: ^5.9.3
+    gap: ^3.0.1
+    faker: ^2.2.0
+    collection: ^1.19.0
+    intl: ^0.19.0
+    flutter_form_builder: ^9.6.0
+    wakelock_plus: ^1.2.10
+    form_builder_validators: ^11.1.1
+    flutter_dotenv: ^5.2.1
+    power_geojson: ^1.0.8+14
+    socket_io_client: ^3.0.2
+    shared_preferences: ^2.3.4
+    encrypt: ^5.0.3
+    crypto: ^3.0.6
+    dio: ^5.7.0
+    tutorial_coach_mark: ^1.2.13
+
+dev_dependencies:
+    flutter_test:
+        sdk: flutter
+
+    flutter_lints: ^5.0.0
+    flutter_native_splash: ^2.3.2
+    flutter_launcher_icons: ^0.13.1
+
+flutter:
+    generate: true
+    uses-material-design: true
+    assets:
+        - src/
+        - .env
+
+    fonts:
+        - family: InterEmployeeChecks
+          fonts:
+              - asset: src/fonts/Inter_18pt-Medium.ttf
+        - family: InterEmployeeChecksRegular
+          fonts:
+              - asset: src/fonts/Inter_18pt-Regular.ttf
+              #   - asset: src/fonts/Inter_18pt-Bold.ttf
+              #   - asset: src/fonts/Inter_18pt-ExtraLight.ttf
+              #   - asset: src/fonts/Inter_18pt-Light.ttf
+              #   - asset: src/fonts/Inter_18pt-Medium.ttf
+              #   - asset: src/fonts/Inter_18pt-Thin.ttf

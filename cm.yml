@@ -1,0 +1,8 @@
+# mason add --path bricks/squelette youmti_squelette
+# mason make youmti_squelette -o generated && code generated/MyAmazingApp
+
+# flutter build apk --release --split-per-abi --flavor staging
+#  --keyAlias=keytemplate --keyPassword=noTest --storeFile=C:\Users\youmt\Programminng\Flutter\templates\mason_bricks-main\bricks\template-keystore.jks --storePassword=Test01
+# ./bricks/squelette/__brick__/**/android
+# rmdir /s /q "build/web" && flutter build web && wrangler pages deploy build/web
+# flutter build apk --release
