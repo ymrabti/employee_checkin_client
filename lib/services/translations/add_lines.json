@@ -1,11 +1,11 @@
 {
     "fr": {
-        "appSettings": "Paramètres de l'application : changer la langue, la luminosité et plus encore"
+        "have_account_prompt": "Vous avez déjà un compte ?"
     },
     "ar": {
-        "appSettings": "إعدادات التطبيق: تغيير اللغة والسطوع والمزيد"
+        "have_account_prompt": "هل لديك حساب بالفعل؟"
     },
     "en": {
-        "appSettings": "App settings: change language, brightness and more"
+        "have_account_prompt": "Already have an account?"
     }
 }

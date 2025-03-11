@@ -2,17 +2,15 @@ import "package:flutter/cupertino.dart";
 import "package:flutter/services.dart";
 import "package:employee_checks/lib.dart";
 
-
 ThemeData EmployeeChecksTheme({required bool dark}) {
   MaterialColor fgColor = dark ? EmployeeChecksColors.textColorDark : EmployeeChecksColors.textColorLight;
   MaterialColor bgColor = dark ? EmployeeChecksColors.textColorLight : EmployeeChecksColors.textColorDark;
-  final TextStyle ts = TextStyle(letterSpacing: 0.7.r, color: fgColor);
+  final TextStyle ts = TextStyle(letterSpacing: 4.r, color: fgColor);
   final TextStyle ier = ts.copyWith(fontFamily: 'InterEmployeeChecksRegular');
 //   final TextStyle ie = ts.copyWith(fontFamily: 'InterEmployeeChecks');
   Color colorFill = bgColor[dark ? 800 : 300]!;
   Color colorForePrimary = fgColor[!dark ? 800 : 300]!;
   Color colorFore = fgColor[!dark ? 700 : 400]!;
-//   Color appbarColor = EmployeeChecksColors.textColorLight.shade700.transform(!dark);
   ColorScheme colorSchemeDark = ColorScheme.dark(
     primary: EmployeeChecksColors.schemeDark,
     secondary: EmployeeChecksColors.schemeAccent,
@@ -175,10 +173,12 @@ ThemeData EmployeeChecksTheme({required bool dark}) {
       iconColor: fgColor,
       style: ListTileStyle.list,
       subtitleTextStyle: TextStyle(
+        letterSpacing: 4.r,
         color: fgColor,
         fontStyle: FontStyle.italic,
       ),
       titleTextStyle: TextStyle(
+        letterSpacing: 4.r,
         color: fgColor,
       ),
     ),
@@ -246,7 +246,7 @@ ThemeData EmployeeChecksTheme({required bool dark}) {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(color: Color(0xff5EDE99)),
+        borderSide: BorderSide(color: colorSchemeDark.primary),
         gapPadding: 10.r,
       ),
       errorBorder: OutlineInputBorder(
@@ -284,10 +284,12 @@ ThemeData EmployeeChecksTheme({required bool dark}) {
         gapPadding: 10.r,
       ),
       labelStyle: TextStyle(
+        letterSpacing: 4.r,
         color: colorForePrimary,
         fontSize: 16.spMin,
       ),
       hintStyle: TextStyle(
+        letterSpacing: 4.r,
         fontSize: 14.spMin,
         color: colorFore,
         fontFamily: 'InterEmployeeChecks',
@@ -299,19 +301,19 @@ ThemeData EmployeeChecksTheme({required bool dark}) {
     ),
     datePickerTheme: DatePickerThemeData(
       todayBackgroundColor: WidgetStatePropertyAll<Color>(EmployeeChecksColors.schemeDark),
-      dayStyle: TextStyle(fontSize: 11.spMin),
-      yearStyle: TextStyle(fontSize: 13.spMin),
-      weekdayStyle: TextStyle(fontSize: 13.spMin),
+      dayStyle: TextStyle(letterSpacing: 4.r, fontSize: 11.spMin),
+      yearStyle: TextStyle(letterSpacing: 4.r, fontSize: 13.spMin),
+      weekdayStyle: TextStyle(letterSpacing: 4.r, fontSize: 13.spMin),
       confirmButtonStyle: ButtonStyle(
         textStyle: WidgetStatePropertyAll<TextStyle>(
-          TextStyle(fontSize: 19.spMin),
+          TextStyle(letterSpacing: 4.r, fontSize: 19.spMin),
         ),
       ),
-      headerHelpStyle: TextStyle(fontSize: 12.spMin),
-      headerHeadlineStyle: TextStyle(fontSize: 12.spMin),
+      headerHelpStyle: TextStyle(letterSpacing: 4.r, fontSize: 12.spMin),
+      headerHeadlineStyle: TextStyle(letterSpacing: 4.r, fontSize: 12.spMin),
       cancelButtonStyle: ButtonStyle(
         textStyle: WidgetStatePropertyAll<TextStyle>(
-          TextStyle(fontSize: 16.spMin),
+          TextStyle(letterSpacing: 4.r, fontSize: 16.spMin),
         ),
       ),
     ),
@@ -330,6 +332,7 @@ ThemeData EmployeeChecksTheme({required bool dark}) {
       centerTitle: true,
       scrolledUnderElevation: 0,
       titleTextStyle: TextStyle(
+        letterSpacing: 4.r,
         color: fgColor.contrast(50),
         fontSize: 20.sw,
         fontWeight: FontWeight.bold,
@@ -365,6 +368,7 @@ ThemeData EmployeeChecksTheme({required bool dark}) {
       padding: EdgeInsets.all(4.r),
       textColor: Colors.white,
       textStyle: TextStyle(
+        letterSpacing: 4.r,
         fontFamily: 'InterEmployeeChecks',
         fontSize: 14.spMin,
         color: Colors.white,
@@ -377,6 +381,7 @@ ThemeData EmployeeChecksTheme({required bool dark}) {
     ),
     tooltipTheme: TooltipThemeData(
       textStyle: TextStyle(
+        letterSpacing: 4.r,
         color: fgColor,
         fontSize: 16.spMin,
       ),
@@ -396,6 +401,7 @@ ThemeData EmployeeChecksTheme({required bool dark}) {
       width: EmployeeChecksPlatform.isPhone ? double.maxFinite : 400,
       showCloseIcon: true,
       contentTextStyle: TextStyle(
+        letterSpacing: 4.r,
         color: fgColor,
         fontSize: 14.spMin,
         fontFamily: 'InterEmployeeChecks',

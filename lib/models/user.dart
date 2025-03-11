@@ -2,12 +2,12 @@ import "package:faker/faker.dart";
 import "package:power_geojson/power_geojson.dart";
 import "package:employee_checks/lib.dart";
 
-class EmployeeChecksUser  extends IGenericAppModel{
-  AuthorizationUser user;
+class EmployeeChecksUser extends IGenericAppModel {
+  AuthorizationUser personalInfos;
   AuthorizationTokens tokens;
 
   EmployeeChecksUser({
-    required this.user,
+    required this.personalInfos,
     required this.tokens,
   });
 
@@ -24,11 +24,11 @@ class EmployeeChecksUser  extends IGenericAppModel{
   bool get accessTokenValid => tokens.access.expires.isAfter(DateTime.now().toUtc());
 
   EmployeeChecksUser copyWith({
-    AuthorizationUser? user,
+    AuthorizationUser? personalInfos,
     AuthorizationTokens? tokens,
   }) {
     return EmployeeChecksUser(
-      user: user ?? this.user,
+      personalInfos: personalInfos ?? this.personalInfos,
       tokens: tokens ?? this.tokens,
     );
   }
@@ -36,21 +36,21 @@ class EmployeeChecksUser  extends IGenericAppModel{
   @override
   Map<String, Object?> toJson() {
     return <String, Object?>{
-      EmployeeChecksUserEnum.user.name: user.toJson(),
+      EmployeeChecksUserEnum.user.name: personalInfos.toJson(),
       EmployeeChecksUserEnum.tokens.name: tokens.toJson(),
     };
   }
 
   factory EmployeeChecksUser.random() {
     return EmployeeChecksUser(
-      user: AuthorizationUser.random(),
+      personalInfos: AuthorizationUser.random(),
       tokens: AuthorizationTokens.random(),
     );
   }
 
   factory EmployeeChecksUser.fromJson(Map<String, Object?> json) {
     return EmployeeChecksUser(
-      user: AuthorizationUser.fromJson(json[EmployeeChecksUserEnum.user.name] as Map<String, Object?>),
+      personalInfos: AuthorizationUser.fromJson(json[EmployeeChecksUserEnum.user.name] as Map<String, Object?>),
       tokens: AuthorizationTokens.fromJson(json[EmployeeChecksUserEnum.tokens.name] as Map<String, Object?>),
     );
   }
@@ -64,7 +64,7 @@ class EmployeeChecksUser  extends IGenericAppModel{
   bool operator ==(Object other) {
     return other is EmployeeChecksUser &&
         other.runtimeType == runtimeType &&
-        other.user == user && //
+        other.personalInfos == personalInfos && //
         other.tokens == tokens;
   }
 
@@ -72,22 +72,22 @@ class EmployeeChecksUser  extends IGenericAppModel{
   int get hashCode {
     return Object.hash(
       runtimeType,
-      user,
+      personalInfos,
       tokens,
     );
   }
 
   static Future<EmployeeChecksUser?> loadData(String encryptionKey) async {
-    final EmployeeChecksUser? user = (await IGenericAppModel.load<EmployeeChecksUser>(EmployeeChecksUserEnum.user.name,encryptionKey))?.value;
+    final EmployeeChecksUser? user = (await IGenericAppModel.load<EmployeeChecksUser>(EmployeeChecksUserEnum.user.name, encryptionKey))?.value;
     final AuthorizationTokens? tokens = user?.tokens;
     if (tokens == null || user == null) return null;
     if (user.accessTokenValid) {
       return user;
     } else if (!user.accessTokenValid && user.refreshTokenValid) {
-      AuthorizationTokens? newTokens = await EmployeeChecksAuthService.refreshToken(user.tokens.refresh.token);
+      AuthorizationTokens? newTokens = await EmployeeChecksAuthService().refreshToken(user.tokens.refresh.token);
       if (newTokens == null) return null;
       logg('new TokenModel token expires = ${newTokens.access.expires}');
-      EmployeeChecksUser newUser = EmployeeChecksUser(user: user.user, tokens: newTokens);
+      EmployeeChecksUser newUser = EmployeeChecksUser(personalInfos: user.personalInfos, tokens: newTokens);
       await newUser.saveUser(encryptionKey);
       return newUser;
     }
@@ -313,7 +313,6 @@ class AuthorizationUser {
     );
   }
 }
-
 
 enum TokenModelEnum {
   token,

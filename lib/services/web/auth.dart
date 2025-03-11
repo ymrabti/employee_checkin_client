@@ -4,9 +4,9 @@ import "package:employee_checks/lib.dart" hide Key;
 import "package:get/get.dart" hide Response;
 // import "package:flutter_windowmanager/flutter_windowmanager.dart";
 
-abstract final class EmployeeChecksAuthService {
-  static String apiUrl = "http://195.201.167.74:7071";
-  static Dio getDio() {
+class EmployeeChecksAuthService extends IWebService {
+  @override
+  Dio getDio() {
     Dio dio = Dio(
       BaseOptions(
         sendTimeout: Duration(minutes: 1),
@@ -19,23 +19,22 @@ abstract final class EmployeeChecksAuthService {
     return dio;
   }
 
-
-  static Future<void> logOut(BuildContext context) async {
+  Future<void> logOut(BuildContext context) async {
     await context.read<EmployeeChecksState>().disconnect();
     Get.offNamedUntil(
-        EmployeeChecksLoginPage.route,
-        (Route<void> route) => false,
+      EmployeeChecksLoginPage.route,
+      (Route<void> route) => false,
     );
   }
 
-  static Future<EmployeeChecksUser?> getuserConnected(String encryptionKey) async {
+  Future<EmployeeChecksUser?> getuserConnected(String encryptionKey) async {
     IGenericAppMap<EmployeeChecksUser>? iGenericAppMap = await IGenericAppModel.load<EmployeeChecksUser>(EmployeeChecksUserEnum.user.name, encryptionKey);
     EmployeeChecksUser? user = iGenericAppMap?.value;
     return user;
   }
 
-  static Future<EmployeeChecksUser?> login(String username, String password, String encryptionKey) async {
-    Dio dio = EmployeeChecksAuthService.getDio();
+  Future<EmployeeChecksUser?> login(String username, String password, String encryptionKey) async {
+    Dio dio = getDio();
     Response<Map<String, Object?>> res = await dio.post(
       '/Login',
       data: <String, String>{
@@ -58,13 +57,13 @@ abstract final class EmployeeChecksAuthService {
     return null;
   }
 
-  static Future<bool> resetPassword({
+  Future<bool> resetPassword({
     required String username,
     required String currentPassword,
     required String newPassword,
     required String encryptionKey,
   }) async {
-    Dio dio = EmployeeChecksAuthService.getDio();
+    Dio dio = getDio();
     try {
       Response<void> res = await dio.post(
         '/ChangePassword',
@@ -82,7 +81,7 @@ abstract final class EmployeeChecksAuthService {
     }
   }
 
-  static Future<AuthorizationTokens?> refreshToken(String refreshToken) async {
+  Future<AuthorizationTokens?> refreshToken(String refreshToken) async {
     Dio dio = getDio();
     Response<Map<String, Object?>> res = await dio.post(
       '/refresh-tokens',
@@ -101,7 +100,7 @@ abstract final class EmployeeChecksAuthService {
     return userAuth;
   }
 
-  static Future<EmployeeChecksUser?> register({
+  Future<EmployeeChecksUser?> register({
     required String username,
     required String password,
     required String firstName,
@@ -109,7 +108,7 @@ abstract final class EmployeeChecksAuthService {
     required String confirmPassword,
     required String encryptionKey,
   }) async {
-    Dio dio = EmployeeChecksAuthService.getDio();
+    Dio dio = getDio();
     Response<Map<String, Object?>> res = await dio.post(
       '/RegisterCitizen',
       data: <String, Object>{
@@ -132,7 +131,29 @@ abstract final class EmployeeChecksAuthService {
     return null;
   }
 
-  static Future<void> redirectAfterLogin() async {
-    await Get.offNamedUntil(EmployeeChecksHomeScreen.route, (Route<void> route) => false);
+  Future<void> redirectAfterAuth({
+    required BuildContext context,
+    required AuthorizationTokens tokens,
+    required String username,
+    required String route,
+  }) async {
+    await context.read<EmployeeChecksState>().showTutorial(false);
+    context.read<EmployeeChecksState>().load = false;
+    EmployeeChecksService citizenService = EmployeeChecksService(context: context, auth: tokens);
+    AuthorizationUser? personalInfos = await citizenService.getCitizen(username: username);
+    //
+
+    if (personalInfos != null) {
+      EmployeeChecksUser? user = EmployeeChecksUser(tokens: tokens, personalInfos: personalInfos);
+      context.setUserConnected(user, signalR: true);
+      context.read<EmployeeChecksRealtimeState>().updateSocket(user: user);
+      await Get.offNamedUntil(route, (Route<void> route) => false);
+    } else {
+      context.hideCurrentAndShowSnackbar(
+        SnackBar(
+          content: Text(context.tr.invalidFormText),
+        ),
+      );
+    }
   }
 }

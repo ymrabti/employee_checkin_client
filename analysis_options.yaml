@@ -1,4 +1,10 @@
 include: package:flutter_lints/flutter.yaml
+
+analyzer:
+    errors:
+        use_build_context_synchronously: ignore
+        library_prefixes: ignore
+
 linter:
     rules:
         prefer_const_constructors: false

@@ -8,20 +8,20 @@ class EmployeeChecksHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return EmployeeChecksScaffold(
-    appBar: AppBar(
+      appBar: AppBar(
         titleTextStyle: context.theme.primaryTextTheme.titleMedium,
-        title: Text('${context.tr.title} - ${context.watch<EmployeeChecksState>().user?.user.name ?? ''}'),
+        title: Text('${context.tr.title} - ${context.watch<EmployeeChecksState>().user?.personalInfos.name ?? ''}'),
         actions: <Widget>[IconSettings()],
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(context.watch<EmployeeChecksState>().user?.user.name ?? ''),
+            Text(context.watch<EmployeeChecksState>().user?.personalInfos.name ?? ''),
             const SizedBox(height: 20),
             FilledButton(
               onPressed: () {
-                EmployeeChecksAuthService.logOut(context);
+                EmployeeChecksAuthService().logOut(context);
               },
               child: Text(context.tr.logout),
             ),

@@ -2,10 +2,10 @@ import 'package:socket_io_client/socket_io_client.dart';
 import 'package:employee_checks/lib.dart';
 
 class EmployeeChecksRealtimeState extends ChangeNotifier {
-  void updateSocket({EmployeeChecksUser? auth}) {
-    if (auth != null && auth.accessTokenValid && (socket?.disconnected ?? true)) {
+  void updateSocket({EmployeeChecksUser? user}) {
+    if (user != null && user.accessTokenValid && (socket?.disconnected ?? true)) {
       final Socket sock = RealtimeConnectivity.getSocketIO(
-        auth,
+        user,
       );
       socket = null;
       notifyListeners();
@@ -44,9 +44,9 @@ class EmployeeChecksRealtimeState extends ChangeNotifier {
       notifyListeners();
     });
     socket?.onReconnectAttempt((_) async {
-      /* EcoUser? user = Get.context?.read<AppState>().userConnected;
+      /* AuthorizationUser? user = Get.context?.read<AppState>().userConnected;
       await Get.context?.read<AppState>().refreshTokens(user?.auth);
-      EcoUser? userPost = Get.context?.read<AppState>().userConnected;
+      AuthorizationUser? userPost = Get.context?.read<AppState>().userConnected;
       updateSocket(auth: userPost?.auth); */
       buttonColor = Colors.yellow;
       notifyListeners();

@@ -23,7 +23,7 @@ Future<void> main() async {
   final SettingsController settingsController = SettingsController();
   await settingsController.loadSettings(encryptionKey: encryptionKey, systemBrightness: systemBrightness);
 
-  EmployeeChecksUser? user = await EmployeeChecksAuthService.getuserConnected(encryptionKey);
+  EmployeeChecksUser? user = await EmployeeChecksAuthService().getuserConnected(encryptionKey);
   stopWatch.stop();
   logg(stopWatch.elapsedMilliseconds, 'load settings stopwatch');
   SystemChrome.setSystemUIOverlayStyle(
@@ -115,12 +115,13 @@ Widget _protectedRoute({
 
 final Map<String, Widget Function(BuildContext context)> routes = <String, Widget Function(BuildContext context)>{
   // PUBLIC
-  EmployeeChecksSettingsView.route:  (BuildContext context) => EmployeeChecksSettingsView(),
-  EmployeeChecksLoginPage.route:  (BuildContext context) => EmployeeChecksLoginPage(),
+  EmployeeChecksSettingsView.route: (BuildContext context) => EmployeeChecksSettingsView(),
+  EmployeeChecksRegisterScreen.route: /**********/ (BuildContext context) => EmployeeChecksRegisterScreen(),
+  EmployeeChecksLoginPage.route: (BuildContext context) => EmployeeChecksLoginPage(),
   // EmployeeChecksSplashScreen.route:  (BuildContext context) => EmployeeChecksSplashScreen(),
   // INTERMIEDIATES
 
-  EmployeeChecksOTP_Page.route:  (BuildContext context) {
+  EmployeeChecksOTP_Page.route: (BuildContext context) {
     OTPScreenArguments? arguments = ModalRoute.of(context)?.settings.arguments as OTPScreenArguments?;
     String encryptKey = context.read<EmployeeChecksState>().encryptKey;
     return arguments == null
@@ -130,5 +131,5 @@ final Map<String, Widget Function(BuildContext context)> routes = <String, Widge
             encryptionKey: encryptKey,
           );
   }, // PROTECTED
-  EmployeeChecksHomeScreen.route:  (BuildContext c) => _protectedRoute(context: c, when: (_) => EmployeeChecksHomeScreen()),
+  EmployeeChecksHomeScreen.route: (BuildContext c) => _protectedRoute(context: c, when: (_) => EmployeeChecksHomeScreen()),
 };

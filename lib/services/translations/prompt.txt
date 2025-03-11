@@ -1,5 +1,4 @@
-"": "App settings: change language, brightness and more",
-
+"have_account_prompt": "",
 
 generate lines.json
 {

@@ -4,7 +4,7 @@ import 'package:employee_checks/lib.dart';
 abstract class RealtimeConnectivity {
   static Socket getSocketIO(EmployeeChecksUser? auth) {
     Socket socket = io(
-      '${EmployeeChecksAuthService.apiUrl}/ecogeste/',
+      '${EmployeeChecksAuthService().apiUrl}/ecogeste/',
       OptionBuilder()
           .setExtraHeaders(<String, Object?>{
             'Authorization': "Bearer ${auth?.tokens.access.token}",
@@ -17,7 +17,6 @@ abstract class RealtimeConnectivity {
     return socket;
   }
 
-  
   static Future<void> accountActivity(Object? message) async {
     logg(message);
   }
