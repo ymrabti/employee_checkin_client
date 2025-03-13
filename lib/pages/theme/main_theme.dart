@@ -18,6 +18,7 @@ ThemeData EmployeeChecksTheme({required bool dark}) {
     surface: bgColor,
     brightness: Brightness.dark,
   );
+  //
   ColorScheme colorSchemeLight = ColorScheme.light(
     primary: EmployeeChecksColors.schemeLight,
     secondary: EmployeeChecksColors.schemeAccent,
