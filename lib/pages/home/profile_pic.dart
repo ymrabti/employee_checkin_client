@@ -308,12 +308,20 @@ class _ProfilePicState extends State<EmployeeChecksProfilePic> {
 }
 
 class ImagedNetwork extends StatelessWidget {
-  ImagedNetwork({super.key, required this.url});
+  ImagedNetwork({
+    super.key,
+    required this.url,
+    this.headers,
+  });
   final String url;
+  final Map<String, String>? headers;
   @override
   Widget build(BuildContext context) {
     return Image(
-      image: NetworkImage(url),
+      image: NetworkImage(
+        url,
+        headers: headers,
+      ),
       fit: BoxFit.cover,
       errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
         return Center(

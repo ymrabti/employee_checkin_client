@@ -21,7 +21,14 @@ class EmployeeChecksHomeScreen extends StatelessWidget {
           spacing: 12.r,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            ClipOval(child: ImagedNetwork(url: url)),
+            ClipOval(
+              child: ImagedNetwork(
+                url: url,
+                headers: <String, String>{
+                  UserEnum.Authorization.name: 'Bearer ${context.watch<EmployeeChecksState>().user?.tokens.access.token}',
+                },
+              ),
+            ),
             Text(personalInfos?.firstName ?? ''),
             const SizedBox(height: 20),
             FilledButton(
