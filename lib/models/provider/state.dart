@@ -1,5 +1,5 @@
 import 'package:employee_checks/lib.dart';
-
+const int SHOW_SCANNED_USER_IN_MELLIS = 5_000;
 class EmployeeChecksState extends ChangeNotifier {
   final SettingsController settingsController;
   bool loading = false;
@@ -30,7 +30,7 @@ class EmployeeChecksState extends ChangeNotifier {
     _userScanned = iUser;
     notifyListeners();
     Future<void>.delayed(
-      Duration(seconds: 5),
+      Duration(milliseconds: SHOW_SCANNED_USER_IN_MELLIS),
       () {
         _userScanned = null;
         notifyListeners();

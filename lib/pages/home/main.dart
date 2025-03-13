@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:employee_checks/lib.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -10,12 +12,18 @@ class EmployeeChecksHomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     EmployeeChecksUser? user = context.watch<EmployeeChecksState>().user;
     return EmployeeChecksScaffold(
+      /* appBar: AppBar(
+        title: Text(
+          context.watch<EmployeeChecksState>().user?.personalInfos.id ?? '',
+          style: context.theme.primaryTextTheme.titleMedium,
+        ),
+      ), */
       body: Stack(
         children: <Widget>[
           user?.personalInfos.role == 'fieldWorker'
               ? //
               fieldWorkerWidget()
-              : userWidget(context.watch<EmployeeChecksState>().user),
+              : UserWidget(user: user, start: DateTime.now()),
           Positioned(
             bottom: 12.r,
             left: 0,
@@ -40,6 +48,7 @@ class EmployeeChecksHomeScreen extends StatelessWidget {
           IncomeingQr? incomingQrData = context.watch<EmployeeChecksState>().qr;
           AuthorizationUser? userScanned = context.watch<EmployeeChecksState>().userScanned;
           double radius = 12.r;
+          double borderWidth = 15.0.r;
           return AnimatedSwitcher(
             duration: Durations.medium2,
             transitionBuilder: (Widget child, Animation<double> animation) {
@@ -59,23 +68,31 @@ class EmployeeChecksHomeScreen extends StatelessWidget {
                     children: <Widget>[
                       if (userScanned == null)
                         BorderProgressIndicator(
-                          progressColor: context.theme.colorScheme.secondary,
+                          progressColor: context.theme.primaryColorDark,
                           backgroundColor: context.theme.foregroundColor,
                           incomeingQr: incomingQrData,
                           borderRadius: radius,
-                          borderWidth: 5.0,
+                          borderWidth: borderWidth,
                           child: Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.all(Radius.circular(radius)),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(radius + borderWidth / 2),
+                              ),
                             ),
-                            margin: EdgeInsets.all(8.r),
                             padding: EdgeInsets.all(12.r),
                             child: QrImageView(data: incomingQrData.qr, size: 320.r),
                           ),
                         ),
                       //   if (userScanned == null) _WaiterToResend(),
-                      if (userScanned != null) userWidget(EmployeeChecksUser(personalInfos: userScanned, tokens: user!.tokens)),
+                      if (userScanned != null)
+                        UserWidget(
+                          start: DateTime.now(),
+                          user: EmployeeChecksUser(
+                            personalInfos: userScanned,
+                            tokens: user!.tokens,
+                          ),
+                        ),
                     ],
                   ),
           );
@@ -83,23 +100,86 @@ class EmployeeChecksHomeScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget userWidget(EmployeeChecksUser? user) {
+class UserWidget extends StatefulWidget {
+  const UserWidget({
+    super.key,
+    this.user,
+    required this.start,
+  });
+  final DateTime start;
+  final EmployeeChecksUser? user;
+
+  @override
+  State<UserWidget> createState() => _UserWidgetState();
+}
+
+class _UserWidgetState extends State<UserWidget> {
+  double? value;
+  Timer? _timer;
+  @override
+  void initState() {
+    super.initState();
+    EmployeeChecksUser? localUser = context.read<EmployeeChecksState>().user;
+    bool current = localUser?.personalInfos.id == widget.user?.personalInfos.id;
+    if (current) return;
+    _timer = Timer.periodic(
+      Durations.short1,
+      (Timer timer) {
+        double? percentage = percent();
+        value = percentage;
+        setState(() {});
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    super /*  */ .dispose();
+    _timer?.cancel();
+  }
+
+  double percent() {
+    Duration difference = DateTime.now().difference(widget.start);
+    int inSeconds = difference.inMilliseconds;
+    double v = inSeconds / SHOW_SCANNED_USER_IN_MELLIS;
+    return 1 - v;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Builder(
       builder: (BuildContext context) {
+        EmployeeChecksUser? localUser = context.watch<EmployeeChecksState>().user;
+        bool current = localUser?.personalInfos.id == widget.user?.personalInfos.id;
         return Center(
           child: Column(
             spacing: 12.r,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              ClipOval(child: user?.imageWidget),
-              Text(user?.fullName ?? ''),
-              FilledButton(
-                onPressed: () {
-                  Get.toNamed(QRScanView.route);
-                },
-                child: Text(context.tr.scan_qr_now),
+              Stack(
+                children: <Widget>[
+                  ClipOval(child: widget.user?.imageWidget),
+                  if (!current)
+                    Positioned.fill(
+                      child: CircularProgressIndicator(
+                        value: value,
+                      ),
+                    ),
+                ],
               ),
+              Text(
+                widget.user?.fullName ?? '',
+                style: context.theme.primaryTextTheme.titleLarge,
+              ),
+              if (current)
+                FilledButton(
+                  onPressed: () {
+                    Get.toNamed(QRScanView.route);
+                  },
+                  child: Text(context.tr.scan_qr_now),
+                ),
             ],
           ),
         );
@@ -108,13 +188,13 @@ class EmployeeChecksHomeScreen extends StatelessWidget {
   }
 }
 
-class _WaiterToResend extends StatefulWidget {
-  const _WaiterToResend();
+class _UnWaiterToResend extends StatefulWidget {
+  const _UnWaiterToResend();
   @override
-  State<_WaiterToResend> createState() => _WaiterToResendState();
+  State<_UnWaiterToResend> createState() => _UnWaiterToResendState();
 }
 
-class _WaiterToResendState extends State<_WaiterToResend> {
+class _UnWaiterToResendState extends State<_UnWaiterToResend> {
   @override
   Widget build(BuildContext context) {
     double? value = context.watch<EmployeeChecksState>().percent;

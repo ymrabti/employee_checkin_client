@@ -14,7 +14,7 @@ Future<void> main() async {
     await WakelockPlus.enable();
   }
 
-  // if (kDebugMode) await Future<void>.delayed(Duration(seconds: 5));
+  // if (kDebugMode) await Future<void>.delayed(Duration(seconds: 4));
   // await EmployeeChecksLocalServices.clearAll();
 
   Stopwatch stopWatch = Stopwatch()..start();
@@ -87,8 +87,8 @@ Future<void> main() async {
                 darkTheme: EmployeeChecksTheme(dark: settingsController.isDark),
                 popGesture: true,
                 color: settingsController.isDark ? Colors.black87 : Colors.white,
-                //   onGenerateInitialRoutes: (initialRoute) {},
-                //   onGenerateRoute: (settings) {},
+                // onGenerateInitialRoutes: (initialRoute) {},
+                // onGenerateRoute: (settings) {},
                 onGenerateTitle: (BuildContext context) {
                   return context.tr.title;
                 },

@@ -40,8 +40,9 @@ class _QRViewExampleState extends State<QRScanView> {
       key: qrKey,
       onQRViewCreated: _onQRViewCreated,
       overlay: QrScannerOverlayShape(
-        borderColor: Colors.red,
+        borderColor: context.theme.primaryColor,
         borderLength: 30,
+        overlayColor: Colors.grey.withAlpha(128),
         cutOutSize: scanArea,
       ),
       onPermissionSet: (QRViewController ctrl, bool p) => _onPermissionSet(context, ctrl, p),
@@ -59,6 +60,7 @@ class _QRViewExampleState extends State<QRScanView> {
       String? code = result?.code;
       if (code == null) {
         await controller.resumeCamera();
+        setState(() {});
         return;
       }
       bool submitScanResult = await EmployeeChecksService(
@@ -73,6 +75,8 @@ class _QRViewExampleState extends State<QRScanView> {
         );
         Get.back();
       } else {
+        await controller.resumeCamera();
+        setState(() {});
         context.hideCurrentAndShowSnackbar(
           SnackBar(
             content: Text(context.tr.error_submitting),

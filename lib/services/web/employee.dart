@@ -50,9 +50,9 @@ class EmployeeChecksService extends IWebService {
       UserEnum.Qr.name: qr,
     };
     try {
-      Response<Map<String, Object?>> res = await dio.get(
+      Response<Object> res = await dio.post(
         '/scan',
-        queryParameters: dataSent,
+        data: dataSent,
         options: Options(
           headers: <String, Object?>{
             UserEnum.Authorization.name: 'Bearer ${auth?.access.token}',
@@ -61,7 +61,7 @@ class EmployeeChecksService extends IWebService {
       );
       return res.statusCode == 200;
     } on Exception catch (e) {
-      logg(e, 'Exception GetUser');
+      logg(e, 'scan_result');
     }
     return false;
   }

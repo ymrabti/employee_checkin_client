@@ -19,20 +19,23 @@ class EmployeeChecksColors {
     },
   );
 
-  static MaterialColor schemeLight = MaterialColor(0xffbd8802, <int, Color>{
-    50: Color(0xfff7f8e4),
-    100: Color(0xffebecbc),
-    200: Color(0xffdddf90),
-    300: Color(0xffd1d365),
-    400: Color(0xffcacb47),
-    500: Color(0xffc2c427),
-    600: Color(0xffc2b31f),
-    700: Color(0xffc09e13),
-    800: Color(0xffbd8802),
-    900: Color(0xffb76400),
-  });
-
   static MaterialColor schemeDark = MaterialColor(
+    0xffbd8802,
+    <int, Color>{
+      50: Color(0xfff7f8e4),
+      100: Color(0xffebecbc),
+      200: Color(0xffdddf90),
+      300: Color(0xffd1d365),
+      400: Color(0xffcacb47),
+      500: Color(0xffc2c427),
+      600: Color(0xffc2b31f),
+      700: Color(0xffc09e13),
+      800: Color(0xffbd8802),
+      900: Color(0xffb76400),
+    },
+  );
+
+  static MaterialColor schemeLight = MaterialColor(
     0xffecc101,
     <int, Color>{
       50: Color(0xfffcf7df),
@@ -48,18 +51,21 @@ class EmployeeChecksColors {
     },
   );
 
-  static MaterialColor textColorDark = MaterialColor(0xffececec, <int, Color>{
-    50: Color(0xfff9f9f9),
-    100: Color(0xfff4f4f4),
-    200: Color(0xffececec),
-    300: Color(0xffdddddd),
-    400: Color(0xffbababa),
-    500: Color(0xff9a9a9a),
-    600: Color(0xff727272),
-    700: Color(0xff5e5e5e),
-    800: Color(0xff3f3f3f),
-    900: Color(0xff1e1e1e),
-  });
+  static MaterialColor textColorDark = MaterialColor(
+    0xffececec,
+    <int, Color>{
+      50: Color(0xfff9f9f9),
+      100: Color(0xfff4f4f4),
+      200: Color(0xffececec),
+      300: Color(0xffdddddd),
+      400: Color(0xffbababa),
+      500: Color(0xff9a9a9a),
+      600: Color(0xff727272),
+      700: Color(0xff5e5e5e),
+      800: Color(0xff3f3f3f),
+      900: Color(0xff1e1e1e),
+    },
+  );
 
   static MaterialColor textColorLight = MaterialColor(
     0xff303030,

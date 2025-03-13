@@ -249,7 +249,7 @@ class _ProfilePicState extends State<EmployeeChecksProfilePic> {
                   child: Container(
                     color: context.theme.primaryColor.withValues(alpha: animati.value),
                     child: AnimatedSwitcher(
-                      duration: Duration(seconds: 5),
+                      duration: Duration(seconds: 1),
                       transitionBuilder: (Widget child, Animation<double> animation) {
                         return ScaleTransition(scale: animation, child: child);
                       },
