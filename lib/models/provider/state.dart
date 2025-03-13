@@ -22,7 +22,7 @@ class EmployeeChecksState extends ChangeNotifier {
     notifyListeners();
   }
 
-Future<void> setUserConnected(EmployeeChecksUser? newUser) async {
+  Future<void> setUserConnected(EmployeeChecksUser? newUser) async {
     user = newUser;
     await user?.saveUser(encryptKey);
     notifyListeners();

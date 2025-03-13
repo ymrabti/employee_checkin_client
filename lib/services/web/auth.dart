@@ -1,7 +1,10 @@
 import "dart:async";
+import "dart:io";
 import "package:dio/dio.dart";
 import "package:employee_checks/lib.dart" hide Key;
-import "package:get/get.dart" hide Response;
+import "package:get/get.dart" hide Response, FormData, MultipartFile;
+import "package:image_picker/image_picker.dart";
+import "package:path/path.dart";
 // import "package:flutter_windowmanager/flutter_windowmanager.dart";
 
 class EmployeeChecksAuthService extends IWebService {
@@ -12,49 +15,17 @@ class EmployeeChecksAuthService extends IWebService {
         sendTimeout: Duration(minutes: 1),
         receiveTimeout: Duration(minutes: 2),
         connectTimeout: Duration(minutes: 3),
-        baseUrl: '$apiUrl/api/Authentications',
+        baseUrl: '$apiUrl/Auth',
         validateStatus: (int? status) => (status ?? 200) < 499,
       ),
     );
     return dio;
   }
 
-  Future<void> logOut(BuildContext context) async {
-    await context.read<EmployeeChecksState>().disconnect();
-    Get.offNamedUntil(
-      EmployeeChecksLoginPage.route,
-      (Route<void> route) => false,
-    );
-  }
-
   Future<EmployeeChecksUser?> getuserConnected(String encryptionKey) async {
     IGenericAppMap<EmployeeChecksUser>? iGenericAppMap = await IGenericAppModel.load<EmployeeChecksUser>(EmployeeChecksUserEnum.user.name, encryptionKey);
     EmployeeChecksUser? user = iGenericAppMap?.value;
     return user;
-  }
-
-  Future<EmployeeChecksUser?> login(String username, String password, String encryptionKey) async {
-    Dio dio = getDio();
-    Response<Map<String, Object?>> res = await dio.post(
-      '/Login',
-      data: <String, String>{
-        "numberPhone": username.replaceAll(' ', ''),
-        'password': password,
-      },
-    );
-    logg('${res.requestOptions.data}');
-    if (res.statusCode == 200) {
-      try {
-        Map<String, Object?>? data = res.data;
-        if (data != null) {
-          return EmployeeChecksUser.fromJson(data);
-        }
-      } on Exception catch (e) {
-        logg('$e');
-      }
-    }
-    // EmployeeChecksUser? user = (await IGenericAppModel.load<EmployeeChecksUser>(username))?.value;
-    return null;
   }
 
   Future<bool> resetPassword({
@@ -68,9 +39,9 @@ class EmployeeChecksAuthService extends IWebService {
       Response<void> res = await dio.post(
         '/ChangePassword',
         data: <String, String>{
-          "username": username,
-          "currentPassword": currentPassword,
-          "newPassword": newPassword,
+          UserEnum.username.name: username,
+          UserEnum.currentPassword.name: currentPassword,
+          UserEnum.newPassword.name: newPassword,
         },
       );
 
@@ -86,7 +57,7 @@ class EmployeeChecksAuthService extends IWebService {
     Response<Map<String, Object?>> res = await dio.post(
       '/refresh-tokens',
       data: <String, String?>{
-        'refreshToken': refreshToken,
+        UserEnum.refreshToken.name: refreshToken,
       },
     );
     if (res.statusCode != 200) {
@@ -100,34 +71,124 @@ class EmployeeChecksAuthService extends IWebService {
     return userAuth;
   }
 
+  // //////////////////////// /////////////////////////
+  Future<void> uploadFileWithData({
+    required File file,
+    required String name,
+    required String email,
+    required String description,
+  }) async {
+    try {
+      FormData formData = FormData.fromMap(<String, Object>{
+        "name": name,
+        "email": email,
+        "description": description,
+        "photo": await MultipartFile.fromFile(file.path, filename: basename(file.path)),
+      });
+
+      Dio _dio = getDio();
+      Response<Map<String, Object?>> response = await _dio.post(
+        '/Register',
+        data: formData,
+        options: Options(
+          headers: <String, Object?>{"Content-Type": "multipart/form-data"},
+        ),
+      );
+
+      logg("Upload successful: ${response.data}");
+    } catch (e) {
+      logg("Error uploading file: $e");
+    }
+  }
+
+  Future<void> pickAndUploadFile() async {
+    final ImagePicker _picker = ImagePicker();
+    ImageSource? imageSource = await Get.dialog<ImageSource>(
+      Dialog.fullscreen(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Get.context?.theme.primaryColor,
+          ),
+        ),
+      ),
+      barrierColor: Get.context?.theme.primaryColor.withValues(alpha: 0.24),
+      barrierDismissible: true,
+    );
+    if (imageSource == null) return;
+    final XFile? image = await _picker.pickImage(source: imageSource);
+
+    if (image != null) {
+      File file = File(image.path);
+
+      // Sample key-value data
+      String name = "John Doe";
+      String email = "john@example.com";
+      String description = "Sample description text";
+
+      await uploadFileWithData(
+        file: file,
+        name: name,
+        email: email,
+        description: description,
+      );
+    }
+  }
+
   Future<EmployeeChecksUser?> register({
-    required String username,
-    required String password,
-    required String firstName,
-    required String lastName,
-    required String confirmPassword,
-    required String encryptionKey,
+    required Map<String, Object?>? data,
   }) async {
     Dio dio = getDio();
+    if (data == null) return null;
+    FormData formData = FormData.fromMap(data);
     Response<Map<String, Object?>> res = await dio.post(
-      '/RegisterCitizen',
-      data: <String, Object>{
-        "username": username.replaceAll(' ', ''),
-        'password': password,
-        "confirmPassword": confirmPassword,
-        "adresseId": "6f1e6050-4e88-4852-9fc1-1a95eddc2fec",
-        "userRoles": <String>["Citizen"]
-      },
+      '/Register',
+      data: formData,
+      options: Options(
+        headers: <String, Object?>{"Content-Type": "multipart/form-data"},
+      ),
     );
-    if (res.statusCode == 200) {
+    logg(res.data, 'data sent');
+    if (res.statusCode == 201) {
       try {
         Map<String, Object?>? data = res.data;
         if (data == null) return null;
         return EmployeeChecksUser.fromJson(data);
       } on Exception catch (e) {
-        logg('$e');
+        logg(e);
+        return null;
       }
     }
+    return null;
+  }
+
+  Future<void> logOut(BuildContext context) async {
+    await context.read<EmployeeChecksState>().disconnect();
+    Get.offNamedUntil(
+      EmployeeChecksLoginPage.route,
+      (Route<void> route) => false,
+    );
+  }
+
+  Future<EmployeeChecksUser?> login(String username, String password, String encryptionKey) async {
+    Dio dio = getDio();
+    Response<Map<String, Object?>> res = await dio.post(
+      '/Login',
+      data: <String, String>{
+        UserEnum.username.name: username,
+        UserEnum.password.name: password,
+      },
+    );
+    if (res.statusCode == 200) {
+      try {
+        Map<String, Object?>? data = res.data;
+        if (data != null) {
+          return EmployeeChecksUser.fromJson(data);
+        }
+      } on Exception catch (e) {
+        logg(e);
+      }
+    }
+    // EmployeeChecksUser? user = (await IGenericAppModel.load<EmployeeChecksUser>(username))?.value;
     return null;
   }
 
@@ -140,7 +201,7 @@ class EmployeeChecksAuthService extends IWebService {
     await context.read<EmployeeChecksState>().showTutorial(false);
     context.read<EmployeeChecksState>().load = false;
     EmployeeChecksService citizenService = EmployeeChecksService(context: context, auth: tokens);
-    AuthorizationUser? personalInfos = await citizenService.getCitizen(username: username);
+    AuthorizationUser? personalInfos = await citizenService.getEmployee(username: username);
     //
 
     if (personalInfos != null) {

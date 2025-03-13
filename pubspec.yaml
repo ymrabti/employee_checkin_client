@@ -33,6 +33,10 @@ dependencies:
     crypto: ^3.0.6
     dio: ^5.7.0
     tutorial_coach_mark: ^1.2.13
+    qr_flutter: ^4.1.0
+    image_picker: ^1.1.2
+    path: ^1.9.0
+    nested: ^1.0.0
 
 dev_dependencies:
     flutter_test:

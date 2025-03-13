@@ -226,31 +226,46 @@ class AuthorizationUser {
 
   final bool isEmailVerified;
 
-  final String name;
+  final String firstName;
+
+  final String lastName;
+
+  final String username;
 
   final String email;
+
+  final String photo;
 
   final String id;
   AuthorizationUser({
     required this.role,
     required this.isEmailVerified,
-    required this.name,
+    required this.firstName,
+    required this.lastName,
     required this.email,
+    required this.username,
     required this.id,
+    required this.photo,
   });
 
   AuthorizationUser copyWith({
     String? role,
     bool? isEmailVerified,
-    String? name,
+    String? firstName,
+    String? lastName,
+    String? username,
     String? email,
+    String? photo,
     String? id,
   }) {
     return AuthorizationUser(
       role: role ?? this.role,
       isEmailVerified: isEmailVerified ?? this.isEmailVerified,
-      name: name ?? this.name,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
       email: email ?? this.email,
+      username: username ?? this.username,
+      photo: photo ?? this.photo,
       id: id ?? this.id,
     );
   }
@@ -259,9 +274,12 @@ class AuthorizationUser {
     return <String, Object?>{
       UserEnum.role.name: role,
       UserEnum.isEmailVerified.name: isEmailVerified,
-      UserEnum.name.name: name,
+      UserEnum.firstName.name: firstName,
+      UserEnum.lastName.name: lastName,
       UserEnum.email.name: email,
       UserEnum.id.name: id,
+      UserEnum.photo.name: photo,
+      UserEnum.username.name: username,
     };
   }
 
@@ -269,9 +287,12 @@ class AuthorizationUser {
     return AuthorizationUser(
       role: json[UserEnum.role.name] as String,
       isEmailVerified: json[UserEnum.isEmailVerified.name] as bool,
-      name: json[UserEnum.name.name] as String,
+      firstName: json[UserEnum.firstName.name] as String,
+      lastName: json[UserEnum.lastName.name] as String,
       email: json[UserEnum.email.name] as String,
+      username: json[UserEnum.username.name] as String,
       id: json[UserEnum.id.name] as String,
+      photo: (json[UserEnum.photo.name] as String?) ?? '',
     );
   }
 
@@ -279,9 +300,12 @@ class AuthorizationUser {
     return AuthorizationUser(
       role: faker.str4,
       isEmailVerified: faker.binary,
-      name: faker.fullName,
+      firstName: faker.person.firstName(),
+      lastName: faker.person.lastName(),
+      username: faker.internet.userName(),
       email: faker.email1,
       id: faker.str7,
+      photo: faker.image.loremPicsum(width: 480),
     );
   }
 
@@ -296,8 +320,11 @@ class AuthorizationUser {
         other.runtimeType == runtimeType &&
         other.role == role && //
         other.isEmailVerified == isEmailVerified && //
-        other.name == name && //
+        other.firstName == firstName && //
+        other.lastName == lastName && //
+        other.username == username && //
         other.email == email && //
+        other.photo == photo && //
         other.id == id;
   }
 
@@ -307,8 +334,11 @@ class AuthorizationUser {
       runtimeType,
       role,
       isEmailVerified,
-      name,
+      firstName,
+      lastName,
+      username,
       email,
+      photo,
       id,
     );
   }
@@ -335,8 +365,21 @@ enum EmployeeChecksUserEnum {
 enum UserEnum {
   role,
   isEmailVerified,
-  name,
+  firstName,
   email,
   id,
   none,
+  photo,
+  lastName,
+  username,
+  phoneNumber,
+  password,
+  confirmPassword,
+  currentPassword,
+  newPassword,
+  refreshToken,
+  Authorization,
+  gender,
+  dateOfBirth,
+  oldPassword,
 }

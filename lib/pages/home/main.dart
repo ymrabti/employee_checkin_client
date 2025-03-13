@@ -7,17 +7,22 @@ class EmployeeChecksHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AuthorizationUser? personalInfos = context.watch<EmployeeChecksState>().user?.personalInfos;
+    String url = '${EmployeeChecksAuthService().apiUrl}/Employees/photo/${personalInfos?.username}';
+    logg(url);
     return EmployeeChecksScaffold(
       appBar: AppBar(
         titleTextStyle: context.theme.primaryTextTheme.titleMedium,
-        title: Text('${context.tr.title} - ${context.watch<EmployeeChecksState>().user?.personalInfos.name ?? ''}'),
+        title: Text('${context.tr.title} - ${personalInfos?.firstName ?? ''}'),
         actions: <Widget>[IconSettings()],
       ),
       body: Center(
         child: Column(
+          spacing: 12.r,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(context.watch<EmployeeChecksState>().user?.personalInfos.name ?? ''),
+            ClipOval(child: ImagedNetwork(url: url)),
+            Text(personalInfos?.firstName ?? ''),
             const SizedBox(height: 20),
             FilledButton(
               onPressed: () {

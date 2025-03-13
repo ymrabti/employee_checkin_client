@@ -5,7 +5,7 @@ import "package:employee_checks/lib.dart";
 ThemeData EmployeeChecksTheme({required bool dark}) {
   MaterialColor fgColor = dark ? EmployeeChecksColors.textColorDark : EmployeeChecksColors.textColorLight;
   MaterialColor bgColor = dark ? EmployeeChecksColors.textColorLight : EmployeeChecksColors.textColorDark;
-  final TextStyle ts = TextStyle(letterSpacing: 4.r, color: fgColor);
+  final TextStyle ts = TextStyle(letterSpacing: 2.7.r, color: fgColor);
   final TextStyle ier = ts.copyWith(fontFamily: 'InterEmployeeChecksRegular');
 //   final TextStyle ie = ts.copyWith(fontFamily: 'InterEmployeeChecks');
   Color colorFill = bgColor[dark ? 800 : 300]!;

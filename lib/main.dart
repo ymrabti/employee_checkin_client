@@ -4,6 +4,7 @@ import "package:flutter/services.dart";
 import "package:flutter_localizations/flutter_localizations.dart" show GlobalCupertinoLocalizations, GlobalMaterialLocalizations, GlobalWidgetsLocalizations;
 import "package:employee_checks/lib.dart";
 import "package:get/get.dart";
+import "package:nested/nested.dart";
 import "package:wakelock_plus/wakelock_plus.dart" show WakelockPlus;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -40,60 +41,64 @@ Future<void> main() async {
           initTheme: EmployeeChecksTheme(dark: settingsController.isDark),
           duration: const Duration(milliseconds: 300),
           builder: (BuildContext context, ThemeData theme) {
-            return ChangeNotifierProvider<EmployeeChecksState>(
-              create: (BuildContext context) => EmployeeChecksState(
-                settingsController,
-                encryptKey: encryptionKey,
-                user: user,
-              ),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minWidth: 0),
-                child: GetMaterialApp(
-                  title: 'employee_checks',
-                  localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
-                    AppLocalizations.delegate,
-                    GlobalMaterialLocalizations.delegate,
-                    GlobalWidgetsLocalizations.delegate,
-                    GlobalCupertinoLocalizations.delegate,
-                    FormBuilderLocalizations.delegate,
-                  ],
-                  routes: routes,
-                  onUnknownRoute: (RouteSettings settings) {
-                    logg(settings.name, 'onUnknownRoute');
-                    return MaterialPageRoute<void>(
-                      builder: (BuildContext context) => EmployeeChecks_404(),
-                    );
-                  },
-                  unknownRoute: GetPage<void>(
-                    name: EmployeeChecks_404.route,
-                    page: () {
-                      logg('unkown route', 'unkown route');
-                      return EmployeeChecks_404();
-                    },
-                  ),
-                  locale: Locale(settingsController.settings.language),
-                  supportedLocales: AppLocalizations.supportedLocales,
-                  defaultTransition: Transition.cupertino,
-                  transitionDuration: Duration(milliseconds: 500),
-                  debugShowCheckedModeBanner: false,
-                  themeMode: settingsController.isDark ? ThemeMode.dark : ThemeMode.light,
-                  theme: EmployeeChecksTheme(dark: settingsController.isDark),
-                  darkTheme: EmployeeChecksTheme(dark: settingsController.isDark),
-                  popGesture: true,
-                  color: settingsController.isDark ? Colors.black87 : Colors.white,
-                  //   onGenerateInitialRoutes: (initialRoute) {},
-                  //   onGenerateRoute: (settings) {},
-                  onGenerateTitle: (BuildContext context) {
-                    return context.tr.title;
-                  },
-                  onDispose: () => logg('GetX Dispose'),
-                  onInit: () => logg('GetX Init'),
-                  onReady: () => logg('GetX Ready'),
-                  //   initialRoute: user == null ? EmployeeChecksGesteLoginScreen.route : EmployeeChecksMainScreen.route,
-                  home: EmployeeChecksSplashScreen(
-                    dark: settingsController.isDark,
+            return MultiProvider(
+              providers: <SingleChildWidget>[
+                ChangeNotifierProvider<EmployeeChecksState>(
+                  create: (BuildContext context) => EmployeeChecksState(
+                    settingsController,
+                    encryptKey: encryptionKey,
                     user: user,
                   ),
+                ),
+                ChangeNotifierProvider<EmployeeChecksRealtimeState>(
+                  create: (BuildContext context) => EmployeeChecksRealtimeState(),
+                ),
+              ],
+              child: GetMaterialApp(
+                title: 'employee_checks',
+                localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
+                  AppLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                  FormBuilderLocalizations.delegate,
+                ],
+                routes: routes,
+                onUnknownRoute: (RouteSettings settings) {
+                  logg(settings.name, 'onUnknownRoute');
+                  return MaterialPageRoute<void>(
+                    builder: (BuildContext context) => EmployeeChecks_404(),
+                  );
+                },
+                unknownRoute: GetPage<void>(
+                  name: EmployeeChecks_404.route,
+                  page: () {
+                    logg('unkown route', 'unkown route');
+                    return EmployeeChecks_404();
+                  },
+                ),
+                locale: Locale(settingsController.settings.language),
+                supportedLocales: AppLocalizations.supportedLocales,
+                defaultTransition: Transition.cupertino,
+                transitionDuration: Duration(milliseconds: 500),
+                debugShowCheckedModeBanner: false,
+                themeMode: settingsController.isDark ? ThemeMode.dark : ThemeMode.light,
+                theme: EmployeeChecksTheme(dark: settingsController.isDark),
+                darkTheme: EmployeeChecksTheme(dark: settingsController.isDark),
+                popGesture: true,
+                color: settingsController.isDark ? Colors.black87 : Colors.white,
+                //   onGenerateInitialRoutes: (initialRoute) {},
+                //   onGenerateRoute: (settings) {},
+                onGenerateTitle: (BuildContext context) {
+                  return context.tr.title;
+                },
+                onDispose: () => logg('GetX Dispose'),
+                onInit: () => logg('GetX Init'),
+                onReady: () => logg('GetX Ready'),
+                //   initialRoute: user == null ? EmployeeChecksGesteLoginScreen.route : EmployeeChecksMainScreen.route,
+                home: EmployeeChecksSplashScreen(
+                  dark: settingsController.isDark,
+                  user: user,
                 ),
               ),
             );

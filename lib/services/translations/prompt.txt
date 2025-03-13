@@ -1,4 +1,4 @@
-"have_account_prompt": "",
+"unexpected_error": "",
 
 generate lines.json
 {

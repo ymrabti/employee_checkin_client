@@ -1,4 +1,5 @@
 import 'package:employee_checks/lib.dart';
+import "package:flutter_form_builder/flutter_form_builder.dart";
 import 'package:get/get.dart';
 import "package:flutter/cupertino.dart";
 import "package:flutter/foundation.dart";
@@ -71,7 +72,7 @@ class _EmployeeChecksLoginPageState extends State<EmployeeChecksLoginPage> {
   final TextEditingController _passwordController = TextEditingController(
     text: kDebugMode ? 'Azer12@6Gh11' : '',
   );
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   List<TargetFocus> targets = <TargetFocus>[];
@@ -167,14 +168,14 @@ class _EmployeeChecksLoginPageState extends State<EmployeeChecksLoginPage> {
         return SlideFadeTransition(
           fadeAnimation: fadeAnimation,
           slideAnimation: slideAnimation,
-          child: Form(
+          child: FormBuilder(
             key: _formKey,
             child: Column(
               spacing: 18.r,
               children: <Widget>[
                 EmployeeChecksFieldPhoneNumber(phoneController: _phoneController),
                 EmployeeChecksFieldPassword(
-                  name: EmployeeChecksEnum.password.name,
+                  name: UserEnum.password.name,
                   controller: _passwordController,
                   hintText: context.tr.passwordLabelText,
                   labelText: context.tr.passwordLabelText,
@@ -352,7 +353,7 @@ class _EmployeeChecksLoginPageState extends State<EmployeeChecksLoginPage> {
       context: context,
       auth: null,
     );
-    bool node = await citizenService.checkCitizen(
+    bool node = await citizenService.checkEmployee(
       _phoneController.text,
     );
     return !node;

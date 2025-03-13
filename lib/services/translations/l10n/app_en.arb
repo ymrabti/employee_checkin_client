@@ -67,5 +67,9 @@
   "username": "Username",
   "enter_username": "Please enter your username",
   "quick_registration": "Quick registration",
-  "have_account_prompt": "Already have an account?"
+  "have_account_prompt": "Already have an account?",
+  "request_it_now": "request it now",
+  "camera": "camera",
+  "gallery": "gallery",
+  "unexpected_error": "unexpected error"
 }

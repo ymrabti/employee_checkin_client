@@ -67,5 +67,9 @@
   "username": "اسم المستخدم",
   "enter_username": "يرجى إدخال اسم المستخدم",
   "quick_registration": "التسجيل السريع",
-  "have_account_prompt": "هل لديك حساب بالفعل؟"
+  "have_account_prompt": "هل لديك حساب بالفعل؟",
+  "request_it_now": "اطلبه الآن",
+  "camera": "الكاميرا",
+  "gallery": "المعرض",
+  "unexpected_error": "خطأ غير متوقع"
 }

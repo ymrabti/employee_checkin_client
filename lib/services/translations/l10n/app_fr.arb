@@ -67,5 +67,9 @@
   "username": "Nom d'utilisateur",
   "enter_username": "Veuillez entrer votre nom d'utilisateur",
   "quick_registration": "Inscription rapide",
-  "have_account_prompt": "Vous avez déjà un compte ?"
+  "have_account_prompt": "Vous avez déjà un compte ?",
+  "request_it_now": "demandez-le maintenant",
+  "camera": "caméra",
+  "gallery": "galerie",
+  "unexpected_error": "erreur inattendue"
 }

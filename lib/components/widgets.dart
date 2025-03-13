@@ -30,7 +30,7 @@ class EmployeeChecksWaiter extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(30.r),
           child: Image.asset(
-            'src/logo-animated.gif',
+            'src/employee_checks.gif',
           ),
         ),
       ),
@@ -65,7 +65,7 @@ class EmployeeChecksFieldPhoneNumber extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FormBuilderTextField(
-      name: EmployeeChecksEnum.phoneNumber.name,
+      name: UserEnum.phoneNumber.name,
       keyboardType: TextInputType.phone,
       textDirection: TextDirection.ltr,
       controller: _phoneController,
@@ -88,18 +88,41 @@ class EmployeeChecksFieldPhoneNumber extends StatelessWidget {
   }
 }
 
+class EmployeeChecksFieldEmail extends StatelessWidget {
+  const EmployeeChecksFieldEmail({super.key, this.initialValue});
+  final String? initialValue;
+  @override
+  Widget build(BuildContext context) {
+    return FormBuilderTextField(
+      name: UserEnum.email.name,
+      initialValue: initialValue,
+      textDirection: TextDirection.ltr,
+      autovalidateMode: AutovalidateMode.onUnfocus,
+      validator: FormBuilderValidators.compose(
+        <FormFieldValidator<String>>[
+          FormBuilderValidators.email(checkNullOrEmpty: false),
+        ],
+      ),
+      decoration: InputDecoration(
+        hintText: context.tr.email,
+        labelText: context.tr.email,
+      ),
+    );
+  }
+}
+
 class EmployeeChecksFieldUsername extends StatelessWidget {
   const EmployeeChecksFieldUsername({
     super.key,
-    required TextEditingController phoneController,
-  }) : _phoneController = phoneController;
+    required TextEditingController controller,
+  }) : _phoneController = controller;
 
   final TextEditingController _phoneController;
 
   @override
   Widget build(BuildContext context) {
     return FormBuilderTextField(
-      name: EmployeeChecksEnum.username.name,
+      name: UserEnum.username.name,
       textDirection: TextDirection.ltr,
       controller: _phoneController,
       inputFormatters: <TextInputFormatter>[
@@ -108,12 +131,12 @@ class EmployeeChecksFieldUsername extends StatelessWidget {
       validator: FormBuilderValidators.compose(
         <FormFieldValidator<String>>[
           FormBuilderValidators.required(),
-          (String? value) => PhoneNumberFormatter.validator(context, value),
+          //   (String? value) => UsernameFormatter.validator(context, value),
         ],
       ),
       decoration: InputDecoration(
-        hintText: EmployeeChecksEnum.username.hintTr(context),
-        labelText: EmployeeChecksEnum.username.labelTr(context),
+        hintText: context.tr.username,
+        labelText: context.tr.username,
       ),
     );
   }
@@ -203,7 +226,7 @@ class EmployeeChecksFieldFirstName extends StatelessWidget {
     return Builder(
       builder: (BuildContext context) {
         return FormBuilderTextField(
-          name: EmployeeChecksEnum.firstName.name,
+          name: UserEnum.firstName.name,
           autovalidateMode: AutovalidateMode.onUnfocus,
           initialValue: initialValue,
           validator: FormBuilderValidators.compose(
@@ -212,8 +235,8 @@ class EmployeeChecksFieldFirstName extends StatelessWidget {
             ],
           ),
           decoration: InputDecoration(
-            hintText: EmployeeChecksEnum.firstName.hintTr(context),
-            labelText: EmployeeChecksEnum.firstName.labelTr(context),
+            hintText: context.tr.enterFirstName,
+            labelText: context.tr.firstName,
           ),
         );
       },
@@ -229,7 +252,7 @@ class EmployeeChecksFieldLasstName extends StatelessWidget {
     return Builder(
       builder: (BuildContext context) {
         return FormBuilderTextField(
-          name: EmployeeChecksEnum.lastName.name,
+          name: UserEnum.lastName.name,
           initialValue: initialValue,
           autovalidateMode: AutovalidateMode.onUnfocus,
           validator: FormBuilderValidators.compose(
@@ -238,8 +261,8 @@ class EmployeeChecksFieldLasstName extends StatelessWidget {
             ],
           ),
           decoration: InputDecoration(
-            hintText: EmployeeChecksEnum.lastName.hintTr(context),
-            labelText: EmployeeChecksEnum.lastName.labelTr(context),
+            hintText: context.tr.enterLastName,
+            labelText: context.tr.lastName,
           ),
         );
       },

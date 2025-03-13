@@ -13,10 +13,10 @@ class EmployeeChecksService extends IWebService {
   // ///////////// PUBLIC //////////////////
   // /
   @override
-  Dio getDio([String controller = "Citizen"]) {
+  Dio getDio([String controller = "Employees"]) {
     return Dio(
       BaseOptions(
-        baseUrl: '$apiUrl/api/$controller',
+        baseUrl: '$apiUrl/$controller',
         sendTimeout: Duration(minutes: 1),
         receiveTimeout: Duration(minutes: 2),
         connectTimeout: Duration(minutes: 3),
@@ -25,10 +25,10 @@ class EmployeeChecksService extends IWebService {
     );
   }
 
-  Future<bool> checkCitizen(String username) async {
+  Future<bool> checkEmployee(String username) async {
     Dio dio = getDio();
     Map<String, String> dataSent = <String, String>{
-      EmployeeChecksEnum.username.name: username,
+      UserEnum.username.name: username,
     };
     try {
       Response<void> res = await dio.get(
@@ -44,10 +44,10 @@ class EmployeeChecksService extends IWebService {
 
   // ///////////// AUTHORIZED //////////////////
 
-  Future<AuthorizationUser?> getCitizen({required String username}) async {
+  Future<AuthorizationUser?> getEmployee({required String username}) async {
     Dio dio = getDio();
     Map<String, String> dataSent = <String, String>{
-      EmployeeChecksEnum.username.name: username,
+      UserEnum.username.name: username,
     };
     try {
       Response<Map<String, Object?>> res = await dio.get(
@@ -55,7 +55,7 @@ class EmployeeChecksService extends IWebService {
         queryParameters: dataSent,
         options: Options(
           headers: <String, Object?>{
-            EmployeeChecksEnum.Authorization.name: 'Bearer ${auth?.access.token}',
+            UserEnum.Authorization.name: 'Bearer ${auth?.access.token}',
           },
         ),
       );
@@ -64,7 +64,7 @@ class EmployeeChecksService extends IWebService {
         if (data == null) return null;
         return AuthorizationUser.fromJson(<String, Object?>{
           ...data,
-          EmployeeChecksEnum.username.name: username,
+          UserEnum.username.name: username,
         });
       }
     } on Exception catch (e) {
@@ -79,15 +79,12 @@ class EmployeeChecksService extends IWebService {
       <MapEntry<String, Object?>>[
         ...user.toJson().entries.where(
               (MapEntry<String, Object?> e) => <String>[
-                EmployeeChecksEnum.id.name,
-                EmployeeChecksEnum.firstName.name,
-                EmployeeChecksEnum.lastName.name,
-                EmployeeChecksEnum.email.name,
-                EmployeeChecksEnum.gender.name,
-                EmployeeChecksEnum.dateOfBirth.name,
-                EmployeeChecksEnum.identityCard.name,
-                EmployeeChecksEnum.scholar.name,
-                EmployeeChecksEnum.address.name,
+                UserEnum.id.name,
+                UserEnum.firstName.name,
+                UserEnum.lastName.name,
+                UserEnum.email.name,
+                UserEnum.gender.name,
+                UserEnum.dateOfBirth.name,
               ].contains(e.key),
             )
       ],
@@ -98,7 +95,7 @@ class EmployeeChecksService extends IWebService {
         data: userDataMap,
         options: Options(
           headers: <String, Object?>{
-            EmployeeChecksEnum.Authorization.name: 'Bearer ${auth?.access.token}',
+            UserEnum.Authorization.name: 'Bearer ${auth?.access.token}',
           },
         ),
       );
@@ -126,14 +123,14 @@ class EmployeeChecksService extends IWebService {
         '/change-password',
         options: Options(
           headers: <String, Object?>{
-            EmployeeChecksEnum.Authorization.name: 'Bearer ${auth?.access.token}',
+            UserEnum.Authorization.name: 'Bearer ${auth?.access.token}',
           },
         ),
         data: <String, String?>{
-          EmployeeChecksEnum.email.name: email,
-          EmployeeChecksEnum.oldPassword.name: oldPassword,
-          EmployeeChecksEnum.newPassword.name: newPassword,
-          EmployeeChecksEnum.confirmPassword.name: confirmPassword,
+          UserEnum.email.name: email,
+          UserEnum.oldPassword.name: oldPassword,
+          UserEnum.newPassword.name: newPassword,
+          UserEnum.confirmPassword.name: confirmPassword,
         },
       );
 

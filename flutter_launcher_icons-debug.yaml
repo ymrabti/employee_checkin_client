@@ -3,15 +3,15 @@ flutter_launcher_icons:
     android: app_icon
     ios: true
     remove_alpha_ios: true
-    image_path: "src/logo-debug.png"
+    image_path: "src/employee_checks.png"
     adaptive_icon_background: "#e7e7e7"
     # adaptive_icon_foreground: "src/launcher/logo-light-debug.png"
     web:
         generate: true
-        image_path: "src/logo-debug.png"
+        image_path: "src/employee_checks.png"
         background_color: "#hexcode"
         theme_color: "#hexcode"
     windows:
         generate: true
-        image_path: "src/logo-debug.png"
+        image_path: "src/employee_checks.png"
         icon_size: 150

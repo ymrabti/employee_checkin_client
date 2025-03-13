@@ -7,88 +7,6 @@ import 'package:collection/collection.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-enum EmployeeChecksEnum {
-  id,
-  email,
-  qr,
-  firstName,
-  lastName,
-  identityCard,
-  gender,
-  dateOfBirth,
-  scholar,
-  typeCitizen,
-  totalPoints,
-  // auth \\
-  accessToken,
-  tokenType,
-  expiration,
-  refreshToken,
-  refreshTokenExpires,
-  // others \\
-  password,
-  oldPassword,
-  confirmPassword,
-  // none \\
-  none,
-  address,
-  isEmailVerified,
-  isPhoneVerified,
-  role,
-  emailLinkSent,
-  newPassword,
-  Authorization,
-  lng,
-  lat,
-  enteredOtp,
-  username,
-  phoneNumber,
-}
-
-extension EmployeeChecksUserEnumX on EmployeeChecksEnum {
-  String labelTr(BuildContext context) {
-    switch (this) {
-      case EmployeeChecksEnum.username:
-        return (context.tr.username);
-      case EmployeeChecksEnum.phoneNumber:
-        return (context.tr.phoneNumberLabelText);
-      case EmployeeChecksEnum.firstName:
-        return (context.tr.firstName);
-      case EmployeeChecksEnum.lastName:
-        return (context.tr.lastName);
-      case EmployeeChecksEnum.dateOfBirth:
-        return (context.tr.dateOfBirth);
-      case EmployeeChecksEnum.gender:
-        return (context.tr.gender);
-      case EmployeeChecksEnum.email:
-        return (context.tr.email);
-      default:
-        return name;
-    }
-  }
-
-  String hintTr(BuildContext context) {
-    switch (this) {
-      case EmployeeChecksEnum.username:
-        return (context.tr.enter_username);
-      case EmployeeChecksEnum.phoneNumber:
-        return (context.tr.phoneNumberLabelText);
-      case EmployeeChecksEnum.firstName:
-        return (context.tr.enterFirstName);
-      case EmployeeChecksEnum.lastName:
-        return (context.tr.enterLastName);
-      case EmployeeChecksEnum.dateOfBirth:
-        return (context.tr.enterDateOfBirth);
-      case EmployeeChecksEnum.gender:
-        return (context.tr.enterGender);
-      case EmployeeChecksEnum.email:
-        return (context.tr.enterEmail);
-      default:
-        return name;
-    }
-  }
-}
-
 extension NumberFormatter on num {
   String toThousands() {
     final NumberFormat formatter = NumberFormat.decimalPattern('fr');
@@ -285,6 +203,10 @@ extension ContextX on BuildContext {
   void hideCurrentAndShowSnackbar(SnackBar snackbar) {
     ScaffoldMessenger.of(this).hideCurrentSnackBar();
     ScaffoldMessenger.of(this).showSnackBar(snackbar);
+  }
+
+  set load(bool load) {
+    read<EmployeeChecksState>().load = load;
   }
 
   Future<void> setUserConnected(EmployeeChecksUser user, {bool signalR = false}) async {
