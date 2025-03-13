@@ -135,6 +135,8 @@ final Map<String, Widget Function(BuildContext context)> routes = <String, Widge
             arguments: arguments,
             encryptionKey: encryptKey,
           );
-  }, // PROTECTED
+  },
+  // PROTECTED
   EmployeeChecksHomeScreen.route: (BuildContext c) => _protectedRoute(context: c, when: (_) => EmployeeChecksHomeScreen()),
+  QRScanView.route: (BuildContext c) => _protectedRoute(context: c, when: (_) => QRScanView()),
 };

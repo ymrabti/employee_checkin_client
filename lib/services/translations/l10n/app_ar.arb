@@ -71,5 +71,9 @@
   "request_it_now": "اطلبه الآن",
   "camera": "الكاميرا",
   "gallery": "المعرض",
-  "unexpected_error": "خطأ غير متوقع"
+  "unexpected_error": "خطأ غير متوقع",
+  "no_permission": "لا يوجد إذن",
+  "checked_successfully": "تم التحقق بنجاح",
+  "error_submitting": "خطأ أثناء الإرسال",
+  "scan_qr_now": "امسح رمز QR الآن"
 }

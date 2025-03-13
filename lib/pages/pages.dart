@@ -4,3 +4,4 @@ export 'login.dart';
 export 'otp.dart';
 export 'splash.dart';
 export 'register.dart';
+export 'scan.dart';

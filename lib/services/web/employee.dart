@@ -16,7 +16,7 @@ class EmployeeChecksService extends IWebService {
   Dio getDio([String controller = "Employees"]) {
     return Dio(
       BaseOptions(
-        baseUrl: '$apiUrl/$controller',
+        baseUrl: '$apiUrl/api/$controller',
         sendTimeout: Duration(minutes: 1),
         receiveTimeout: Duration(minutes: 2),
         connectTimeout: Duration(minutes: 3),
@@ -43,6 +43,28 @@ class EmployeeChecksService extends IWebService {
   }
 
   // ///////////// AUTHORIZED //////////////////
+
+  Future<bool> scanNow({required String qr}) async {
+    Dio dio = getDio('ScanNow');
+    Map<String, String> dataSent = <String, String>{
+      UserEnum.Qr.name: qr,
+    };
+    try {
+      Response<Map<String, Object?>> res = await dio.get(
+        '/scan',
+        queryParameters: dataSent,
+        options: Options(
+          headers: <String, Object?>{
+            UserEnum.Authorization.name: 'Bearer ${auth?.access.token}',
+          },
+        ),
+      );
+      return res.statusCode == 200;
+    } on Exception catch (e) {
+      logg(e, 'Exception GetUser');
+    }
+    return false;
+  }
 
   Future<AuthorizationUser?> getEmployee({required String username}) async {
     Dio dio = getDio();

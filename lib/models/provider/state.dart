@@ -8,6 +8,36 @@ class EmployeeChecksState extends ChangeNotifier {
     notifyListeners();
   }
 
+  double? percent;
+
+  set changePercent(double? val) {
+    percent = val;
+    notifyListeners();
+  }
+
+  IncomeingQr? _qr;
+  IncomeingQr? get qr => _qr;
+
+  set incomingQr(IncomeingQr iqr) {
+    _qr = iqr;
+    notifyListeners();
+  }
+
+  AuthorizationUser? _userScanned;
+  AuthorizationUser? get userScanned => _userScanned;
+
+  set incomingUserScan(AuthorizationUser iUser) {
+    _userScanned = iUser;
+    notifyListeners();
+    Future<void>.delayed(
+      Duration(seconds: 5),
+      () {
+        _userScanned = null;
+        notifyListeners();
+      },
+    );
+  }
+
   Future<void> disconnect() async {
     await user?.removeUser();
     user = null;
@@ -15,12 +45,6 @@ class EmployeeChecksState extends ChangeNotifier {
   }
 
   EmployeeChecksUser? user;
-  int _months = 3;
-  int get months => _months;
-  void setmonths(int m) {
-    _months = m;
-    notifyListeners();
-  }
 
   Future<void> setUserConnected(EmployeeChecksUser? newUser) async {
     user = newUser;

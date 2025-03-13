@@ -71,5 +71,9 @@
   "request_it_now": "demandez-le maintenant",
   "camera": "caméra",
   "gallery": "galerie",
-  "unexpected_error": "erreur inattendue"
+  "unexpected_error": "erreur inattendue",
+  "no_permission": "pas de permission",
+  "checked_successfully": "vérifié avec succès",
+  "error_submitting": "erreur lors de la soumission",
+  "scan_qr_now": "Scannez le QR maintenant"
 }

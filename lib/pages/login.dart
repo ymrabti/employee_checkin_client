@@ -67,7 +67,7 @@ class EmployeeChecksLoginPage extends StatefulWidget {
 
 class _EmployeeChecksLoginPageState extends State<EmployeeChecksLoginPage> {
   final TextEditingController _phoneController = TextEditingController(
-    text: kDebugMode ? '07 08 24 94 65' : '',
+    text: kDebugMode ? 'waelchiangelica' : '',
   );
   final TextEditingController _passwordController = TextEditingController(
     text: kDebugMode ? 'Azer12@6Gh11' : '',
@@ -173,7 +173,7 @@ class _EmployeeChecksLoginPageState extends State<EmployeeChecksLoginPage> {
             child: Column(
               spacing: 18.r,
               children: <Widget>[
-                EmployeeChecksFieldPhoneNumber(phoneController: _phoneController),
+                EmployeeChecksFieldUsername(controller: _phoneController),
                 EmployeeChecksFieldPassword(
                   name: UserEnum.password.name,
                   controller: _passwordController,

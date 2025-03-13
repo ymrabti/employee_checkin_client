@@ -1,5 +1,6 @@
 name: employee_checks
-description: The Employee Check-In app is a seamless and efficient attendance tracking system that enables employees and staff to check in and out using a QR code scanner. Upon scanning, the employee's photo and full name are instantly displayed on the screen for ver
+description: The Employee Check-In app is a seamless and efficient attendance tracking system that enables employees and staff to check in and out using a QR code scanner. Upon scanning, the employee's photo and full name are instantly displayed on the screen.
+
 version: 1.0.0+1
 publish_to: "none"
 
@@ -24,6 +25,10 @@ dependencies:
     intl: ^0.19.0
     flutter_form_builder: ^9.6.0
     wakelock_plus: ^1.2.10
+    qr_code_scanner:
+        git:
+            url: https://github.com/youmtinetflutterpacks/qr_code_scanner_2.git
+            ref: v1.0.0
     form_builder_validators: ^11.1.1
     flutter_dotenv: ^5.2.1
     power_geojson: ^1.0.8+14

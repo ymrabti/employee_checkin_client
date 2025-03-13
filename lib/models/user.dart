@@ -2,9 +2,26 @@ import "package:faker/faker.dart";
 import "package:power_geojson/power_geojson.dart";
 import "package:employee_checks/lib.dart";
 
+enum EmployeeChecksUserRoles {
+  user,
+  fieldWorker,
+  manager,
+  admin,
+}
+
 class EmployeeChecksUser extends IGenericAppModel {
   AuthorizationUser personalInfos;
   AuthorizationTokens tokens;
+  String get fullName => '${personalInfos.firstName} ${personalInfos.lastName}';
+  Widget get imageWidget {
+    String url = '${EmployeeChecksAuthService().apiUrl}/api/Employees/photo/${personalInfos.username}';
+    return ImagedNetwork(
+      url: url,
+      headers: <String, String>{
+        UserEnum.Authorization.name: 'Bearer ${tokens.access.token}',
+      },
+    );
+  }
 
   EmployeeChecksUser({
     required this.personalInfos,
@@ -18,10 +35,6 @@ class EmployeeChecksUser extends IGenericAppModel {
   Future<void> removeUser() async {
     await remove(EmployeeChecksUserEnum.user.name);
   }
-
-  bool get refreshTokenValid => tokens.refresh.expires.isAfter(DateTime.now().toUtc());
-
-  bool get accessTokenValid => tokens.access.expires.isAfter(DateTime.now().toUtc());
 
   EmployeeChecksUser copyWith({
     AuthorizationUser? personalInfos,
@@ -76,23 +89,6 @@ class EmployeeChecksUser extends IGenericAppModel {
       tokens,
     );
   }
-
-  static Future<EmployeeChecksUser?> loadData(String encryptionKey) async {
-    final EmployeeChecksUser? user = (await IGenericAppModel.load<EmployeeChecksUser>(EmployeeChecksUserEnum.user.name, encryptionKey))?.value;
-    final AuthorizationTokens? tokens = user?.tokens;
-    if (tokens == null || user == null) return null;
-    if (user.accessTokenValid) {
-      return user;
-    } else if (!user.accessTokenValid && user.refreshTokenValid) {
-      AuthorizationTokens? newTokens = await EmployeeChecksAuthService().refreshToken(user.tokens.refresh.token);
-      if (newTokens == null) return null;
-      logg('new TokenModel token expires = ${newTokens.access.expires}');
-      EmployeeChecksUser newUser = EmployeeChecksUser(personalInfos: user.personalInfos, tokens: newTokens);
-      await newUser.saveUser(encryptionKey);
-      return newUser;
-    }
-    return null;
-  }
 }
 
 class AuthorizationTokens {
@@ -113,6 +109,10 @@ class AuthorizationTokens {
       refresh: refresh ?? this.refresh,
     );
   }
+
+  bool get refreshTokenValid => refresh.expires.isAfter(DateTime.now().toUtc());
+
+  bool get accessTokenValid => access.expires.isAfter(DateTime.now().toUtc());
 
   Map<String, Object?> toJson() {
     return <String, Object?>{
@@ -382,4 +382,5 @@ enum UserEnum {
   gender,
   dateOfBirth,
   oldPassword,
+  Qr,
 }

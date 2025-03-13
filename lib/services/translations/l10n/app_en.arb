@@ -71,5 +71,9 @@
   "request_it_now": "request it now",
   "camera": "camera",
   "gallery": "gallery",
-  "unexpected_error": "unexpected error"
+  "unexpected_error": "unexpected error",
+  "no_permission": "no Permission",
+  "checked_successfully": "checked successfully",
+  "error_submitting": "error submitting",
+  "scan_qr_now": "Scan QR now"
 }

@@ -1,12 +1,11 @@
+import 'package:get/get.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import 'package:employee_checks/lib.dart';
 
 class EmployeeChecksRealtimeState extends ChangeNotifier {
   void updateSocket({EmployeeChecksUser? user}) {
-    if (user != null && user.accessTokenValid && (socket?.disconnected ?? true)) {
-      final Socket sock = RealtimeConnectivity.getSocketIO(
-        user,
-      );
+    if ((user != null && user.tokens.accessTokenValid) || (socket?.disconnected ?? true)) {
+      final Socket sock = RealtimeConnectivity.getSocketIO(user);
       socket = null;
       notifyListeners();
       socket = sock;
@@ -52,10 +51,18 @@ class EmployeeChecksRealtimeState extends ChangeNotifier {
       notifyListeners();
     });
     socket?.on(
-      SocketListenEvents.AccountActivity,
-      (dynamic data) async {
-        logg(data, 'AccountActivity');
-        await RealtimeConnectivity.accountActivity(data);
+      SocketListenEvents.QR_STREAM,
+      (Object? message) async {
+        if (message == null) return;
+        Get.context?.read<EmployeeChecksState>().incomingQr = IncomeingQr.fromJson(message as Map<String, Object?>);
+      },
+    );
+    socket?.on(
+      SocketListenEvents.QR_SCANNE,
+      (Object? message) async {
+        if (message == null) return;
+        AuthorizationUser userScanned = AuthorizationUser.fromJson(message as Map<String, Object?>);
+        Get.context?.read<EmployeeChecksState>().incomingUserScan = userScanned;
       },
     );
   }
@@ -66,7 +73,8 @@ class EmployeeChecksRealtimeState extends ChangeNotifier {
 }
 
 abstract class SocketListenEvents {
-  static const String AccountActivity = 'AccountActivity';
+  static const String QR_STREAM = 'QR_STREAM';
+  static const String QR_SCANNE = 'QR_SCANNE';
   static const String DISCONNECT = 'disconnect';
   static const String CONNECT_ERROR = 'connect_error';
 }

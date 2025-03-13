@@ -205,11 +205,21 @@ extension ContextX on BuildContext {
     ScaffoldMessenger.of(this).showSnackBar(snackbar);
   }
 
+  Future<void> logOut() async {
+    await read<EmployeeChecksState>().disconnect();
+    read<EmployeeChecksRealtimeState>().updateSocket(user: null);
+    Get.offNamedUntil(
+      EmployeeChecksLoginPage.route,
+      (Route<void> route) => false,
+    );
+  }
+
+  EmployeeChecksUser? get readUser => read<EmployeeChecksState>().user;
   set load(bool load) {
     read<EmployeeChecksState>().load = load;
   }
 
-  Future<void> setUserConnected(EmployeeChecksUser user, {bool signalR = false}) async {
+  Future<void> setUserConnected(EmployeeChecksUser user) async {
     await read<EmployeeChecksState>().setUserConnected(user);
   }
 

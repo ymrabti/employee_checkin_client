@@ -1,4 +1,4 @@
-"unexpected_error": "",
+"scan_qr_now": "",
 
 generate lines.json
 {

@@ -1,0 +1,1 @@
+dart run lib/services/translations/add_lines.dart && flutter gen-l10n

@@ -1,11 +1,11 @@
 {
     "fr": {
-        "unexpected_error": "erreur inattendue"
+        "scan_qr_now": "Scannez le QR maintenant"
     },
     "ar": {
-        "unexpected_error": "خطأ غير متوقع"
+        "scan_qr_now": "امسح رمز QR الآن"
     },
     "en": {
-        "unexpected_error": "unexpected error"
+        "scan_qr_now": "Scan QR now"
     }
 }

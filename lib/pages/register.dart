@@ -13,9 +13,9 @@ class EmployeeChecksRegisterScreen extends StatefulWidget {
 }
 
 class _SetPasswordPageState extends State<EmployeeChecksRegisterScreen> {
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController(text: kDebugMode ? 'Azer12@6Gh11' : '');
-  final TextEditingController _confirmPasswordController = TextEditingController(text: kDebugMode ? 'Azer12@6Gh11' : '');
+  final TextEditingController _usernameController = TextEditingController(text: kDebugMode ? faker.internet.userName() : null);
+  final TextEditingController _passwordController = TextEditingController(text: kDebugMode ? 'Azer12@6Gh11' : null);
+  final TextEditingController _confirmPasswordController = TextEditingController(text: kDebugMode ? 'Azer12@6Gh11' : null);
   final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
   @override
   void initState() {

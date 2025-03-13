@@ -15,7 +15,7 @@ class EmployeeChecksAuthService extends IWebService {
         sendTimeout: Duration(minutes: 1),
         receiveTimeout: Duration(minutes: 2),
         connectTimeout: Duration(minutes: 3),
-        baseUrl: '$apiUrl/Auth',
+        baseUrl: '$apiUrl/api/Auth',
         validateStatus: (int? status) => (status ?? 200) < 499,
       ),
     );
@@ -52,23 +52,34 @@ class EmployeeChecksAuthService extends IWebService {
     }
   }
 
-  Future<AuthorizationTokens?> refreshToken(String refreshToken) async {
-    Dio dio = getDio();
-    Response<Map<String, Object?>> res = await dio.post(
-      '/refresh-tokens',
-      data: <String, String?>{
-        UserEnum.refreshToken.name: refreshToken,
-      },
-    );
-    if (res.statusCode != 200) {
-      return null;
+  Future<AuthorizationTokens?> refreshToken(AuthorizationTokens tokens) async {
+    if (tokens.accessTokenValid) return tokens;
+    if (!tokens.accessTokenValid && tokens.refreshTokenValid) {
+      Dio dio = getDio();
+      Response<Map<String, Object?>> res = await dio.post(
+        '/refresh-tokens',
+        data: <String, String?>{
+          UserEnum.refreshToken.name: tokens.refresh.token,
+        },
+        options: Options(
+          headers: <String, Object?>{
+            UserEnum.Authorization.name: 'Bearer ${tokens.access.token}',
+          },
+        ),
+      );
+      if (res.statusCode != 200) {
+        return null;
+      }
+      Map<String, Object?>? data = res.data;
+      if (data == null) {
+        return null;
+      }
+      return AuthorizationTokens.fromJson(data);
+      /* EmployeeChecksUser newUser = EmployeeChecksUser(personalInfos: user.personalInfos, tokens: newTokens);
+      await newUser.saveUser(encryptionKey);
+      return newUser; */
     }
-    Map<String, Object?>? data = res.data;
-    if (data == null) {
-      return null;
-    }
-    AuthorizationTokens userAuth = AuthorizationTokens.fromJson(data);
-    return userAuth;
+    return null;
   }
 
   // //////////////////////// /////////////////////////
@@ -147,7 +158,7 @@ class EmployeeChecksAuthService extends IWebService {
         headers: <String, Object?>{"Content-Type": "multipart/form-data"},
       ),
     );
-    logg(res.data, 'data sent');
+
     if (res.statusCode == 201) {
       try {
         Map<String, Object?>? data = res.data;
@@ -159,14 +170,6 @@ class EmployeeChecksAuthService extends IWebService {
       }
     }
     return null;
-  }
-
-  Future<void> logOut(BuildContext context) async {
-    await context.read<EmployeeChecksState>().disconnect();
-    Get.offNamedUntil(
-      EmployeeChecksLoginPage.route,
-      (Route<void> route) => false,
-    );
   }
 
   Future<EmployeeChecksUser?> login(String username, String password, String encryptionKey) async {
@@ -188,7 +191,6 @@ class EmployeeChecksAuthService extends IWebService {
         logg(e);
       }
     }
-    // EmployeeChecksUser? user = (await IGenericAppModel.load<EmployeeChecksUser>(username))?.value;
     return null;
   }
 
@@ -206,7 +208,7 @@ class EmployeeChecksAuthService extends IWebService {
 
     if (personalInfos != null) {
       EmployeeChecksUser? user = EmployeeChecksUser(tokens: tokens, personalInfos: personalInfos);
-      context.setUserConnected(user, signalR: true);
+      context.setUserConnected(user);
       context.read<EmployeeChecksRealtimeState>().updateSocket(user: user);
       await Get.offNamedUntil(route, (Route<void> route) => false);
     } else {

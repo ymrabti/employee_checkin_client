@@ -20,15 +20,28 @@ class _EmployeeChecksSplashScreenState extends State<EmployeeChecksSplashScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback(
-      (Duration timeStamp) {
-        Future<void>.delayed(
-          Duration(seconds: 3),
-          () {
-            Get.offAllNamed(widget.user == null ? EmployeeChecksLoginPage.route : EmployeeChecksHomeScreen.route);
-          },
-        );
+      (Duration timeStamp) async {
+        await _refreshUser(context);
+        Get.offAllNamed(widget.user == null ? EmployeeChecksLoginPage.route : EmployeeChecksHomeScreen.route);
       },
     );
+  }
+
+  Future<void> _refreshUser(BuildContext context) async {
+    EmployeeChecksUser? userBefore = widget.user;
+    if (userBefore == null) return;
+    AuthorizationTokens? newTokens = await EmployeeChecksAuthService().refreshToken(userBefore.tokens);
+    if (newTokens == null) return;
+
+    EmployeeChecksUser newUser = userBefore.copyWith(tokens: newTokens);
+
+    EmployeeChecksService citizenService = EmployeeChecksService(context: context, auth: newUser.tokens);
+    AuthorizationUser? pers = await citizenService.getEmployee(username: newUser.personalInfos.username);
+
+    if (pers == null) return;
+    EmployeeChecksUser updatedUser = newUser.copyWith(personalInfos: pers);
+    await context.setUserConnected(updatedUser);
+    context.read<EmployeeChecksRealtimeState>().updateSocket(user: newUser);
   }
 
   @override
