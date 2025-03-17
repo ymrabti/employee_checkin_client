@@ -1,11 +1,11 @@
 {
     "fr": {
-        "scan_qr_now": "Scannez le QR maintenant"
+        "update_profile": "Mettre à jour le profil"
     },
     "ar": {
-        "scan_qr_now": "امسح رمز QR الآن"
+        "update_profile": "تحديث الملف الشخصي"
     },
     "en": {
-        "scan_qr_now": "Scan QR now"
+        "update_profile": "Update Profile"
     }
 }

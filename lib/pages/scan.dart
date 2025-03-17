@@ -63,17 +63,27 @@ class _QRViewExampleState extends State<QRScanView> {
         setState(() {});
         return;
       }
-      bool submitScanResult = await EmployeeChecksService(
+      AuthorizationUser? qrOffered = await EmployeeChecksService(
         auth: context.read<EmployeeChecksState>().user?.tokens,
         context: context,
       ).scanNow(qr: code);
-      if (submitScanResult) {
+      if (qrOffered != null) {
         context.hideCurrentAndShowSnackbar(
           SnackBar(
             content: Text(context.tr.checked_successfully),
           ),
         );
-        Get.back();
+        Get.off(
+          () {
+            DateTime dateTime = DateTime.now();
+            return Scaffold(
+              body: UserWidget(
+                start: dateTime,
+                personalInfos: qrOffered,
+              ),
+            );
+          },
+        );
       } else {
         await controller.resumeCamera();
         setState(() {});

@@ -4,7 +4,12 @@ import 'package:employee_checks/lib.dart';
 
 class EmployeeChecksRealtimeState extends ChangeNotifier {
   void updateSocket({EmployeeChecksUser? user}) {
-    if ((user != null && user.tokens.accessTokenValid) || (socket?.disconnected ?? true)) {
+    AuthorizationTokens? tokens = user?.tokens;
+    if (user == null || tokens == null) {
+      disconnectSocket();
+      return;
+    }
+    if (tokens.accessTokenValid || (socket?.disconnected ?? true)) {
       final Socket sock = RealtimeConnectivity.getSocketIO(user);
       socket = null;
       notifyListeners();
@@ -14,10 +19,14 @@ class EmployeeChecksRealtimeState extends ChangeNotifier {
       _initializeEventListeners();
       notifyListeners();
     } else {
-      socket?.disconnect();
-      socket?.close();
-      socket?.dispose();
+      disconnectSocket();
     }
+  }
+
+  void disconnectSocket() {
+    socket?.disconnect();
+    socket?.close();
+    socket?.dispose();
   }
 
   Color buttonColor = Colors.transparent;

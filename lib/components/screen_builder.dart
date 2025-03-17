@@ -281,6 +281,27 @@ class _AnimatedCardState extends State<AnimatedCard> with SingleTickerProviderSt
   }
 }
 
+class AnimBuilder extends StatelessWidget {
+  const AnimBuilder({super.key, required this.child});
+  final Widget child;
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: Durations.medium2,
+      transitionBuilder: (Widget child, Animation<double> animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: ScaleTransition(
+            scale: animation,
+            child: child,
+          ),
+        );
+      },
+      child: child,
+    );
+  }
+}
+
 class SlideFadeTransition extends StatelessWidget {
   const SlideFadeTransition({
     super.key,

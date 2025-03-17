@@ -7,7 +7,7 @@ class UsernameFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     // Example: Allows only alphanumeric characters and underscores
-    final String newText = newValue.text.replaceAll(RegExp(r'[^a-zA-Z0-9_]'), '');
+    final String newText = newValue.text.replaceAll(RegExp(r'[^a-zA-Z0-9_\.\-]'), '');
 
     // Return the updated text
     return newValue.copyWith(

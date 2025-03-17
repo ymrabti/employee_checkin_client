@@ -1,5 +1,7 @@
+import 'dart:io';
+
 import 'package:employee_checks/lib.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Response;
 
 class EmployeeChecksSplashScreen extends StatefulWidget {
   static const String route = '/splash';
@@ -40,7 +42,8 @@ class _EmployeeChecksSplashScreenState extends State<EmployeeChecksSplashScreen>
 
     if (pers == null) return;
     EmployeeChecksUser updatedUser = newUser.copyWith(personalInfos: pers);
-    await context.setUserConnected(updatedUser);
+    File file = await downloadImage(updatedUser, updatedUser.personalInfos.photoo);
+    await context.setUserConnected(updatedUser.copyWith(personalInfos: updatedUser.personalInfos.copyWith(path: file.path)));
     context.read<EmployeeChecksRealtimeState>().updateSocket(user: newUser);
   }
 

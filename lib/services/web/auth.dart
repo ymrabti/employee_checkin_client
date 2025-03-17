@@ -52,7 +52,8 @@ class EmployeeChecksAuthService extends IWebService {
     }
   }
 
-  Future<AuthorizationTokens?> refreshToken(AuthorizationTokens tokens) async {
+  Future<AuthorizationTokens?> refreshToken(AuthorizationTokens? tokens) async {
+    if (tokens == null) return tokens;
     if (tokens.accessTokenValid) return tokens;
     if (!tokens.accessTokenValid && tokens.refreshTokenValid) {
       Dio dio = getDio();
@@ -207,9 +208,11 @@ class EmployeeChecksAuthService extends IWebService {
     //
 
     if (personalInfos != null) {
-      EmployeeChecksUser? user = EmployeeChecksUser(tokens: tokens, personalInfos: personalInfos);
-      context.setUserConnected(user);
-      context.read<EmployeeChecksRealtimeState>().updateSocket(user: user);
+      EmployeeChecksUser user = EmployeeChecksUser(tokens: tokens, personalInfos: personalInfos);
+      File file = await downloadImage(user, user.personalInfos.photoo);
+      EmployeeChecksUser copyWith = user.copyWith(personalInfos: personalInfos.copyWith(path: file.path));
+      context.setUserConnected(copyWith);
+      context.read<EmployeeChecksRealtimeState>().updateSocket(user: copyWith);
       await Get.offNamedUntil(route, (Route<void> route) => false);
     } else {
       context.hideCurrentAndShowSnackbar(

@@ -75,5 +75,9 @@
   "no_permission": "pas de permission",
   "checked_successfully": "vérifié avec succès",
   "error_submitting": "erreur lors de la soumission",
-  "scan_qr_now": "Scannez le QR maintenant"
+  "scan_qr_now": "Scannez le QR maintenant",
+  "my_profile": "Mon Profil",
+  "my_check_history": "Mon Historique de Vérification",
+  "scan": "Scanner",
+  "update_profile": "Mettre à jour le profil"
 }

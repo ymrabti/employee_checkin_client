@@ -1,4 +1,4 @@
-"scan_qr_now": "",
+"": "Update Profile",
 
 generate lines.json
 {
@@ -6,5 +6,5 @@ generate lines.json
     "ar": {},
     "en": {}
 }
-keys are the same for every language, treat them as variable names, and translate values
+keys are the same for every language, all keys are variable names and snake_case, and translate values
 do your thins

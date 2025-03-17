@@ -75,5 +75,9 @@
   "no_permission": "لا يوجد إذن",
   "checked_successfully": "تم التحقق بنجاح",
   "error_submitting": "خطأ أثناء الإرسال",
-  "scan_qr_now": "امسح رمز QR الآن"
+  "scan_qr_now": "امسح رمز QR الآن",
+  "my_profile": "ملفي الشخصي",
+  "my_check_history": "تاريخ الفحص الخاص بي",
+  "scan": "مسح",
+  "update_profile": "تحديث الملف الشخصي"
 }

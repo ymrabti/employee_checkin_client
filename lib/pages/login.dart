@@ -1,5 +1,8 @@
+import "dart:io";
+
 import 'package:employee_checks/lib.dart';
 import "package:flutter_form_builder/flutter_form_builder.dart";
+import 'package:path/path.dart' show join;
 import 'package:get/get.dart';
 import "package:flutter/cupertino.dart";
 import "package:flutter/foundation.dart";
@@ -170,10 +173,18 @@ class _EmployeeChecksLoginPageState extends State<EmployeeChecksLoginPage> {
           slideAnimation: slideAnimation,
           child: FormBuilder(
             key: _formKey,
+            initialValue: kDebugMode
+                ? AuthorizationUser.random()
+                    .copyWith(
+                      path: '',
+                      username: 'waelchiangelica',
+                    )
+                    .toMap()
+                : <String, Object>{},
             child: Column(
               spacing: 18.r,
               children: <Widget>[
-                EmployeeChecksFieldUsername(controller: _phoneController),
+                EmployeeChecksFieldUsername(),
                 EmployeeChecksFieldPassword(
                   name: UserEnum.password.name,
                   controller: _passwordController,
@@ -243,6 +254,22 @@ class _EmployeeChecksLoginPageState extends State<EmployeeChecksLoginPage> {
             children: <Widget>[
               TextButton(
                 onPressed: () async {
+                  if (kDebugMode) {
+                    AuthorizationUser user = AuthorizationUser.random();
+                    AuthorizationTokens tokens = AuthorizationTokens.random();
+                    File file = await downloadImage(
+                      EmployeeChecksUser(
+                        personalInfos: user,
+                        tokens: tokens,
+                      ),
+                      user.photo,
+                    );
+                    await Get.toNamed(
+                      EmployeeChecksRegisterScreen.route,
+                      arguments: user.copyWith(path: join(file.path)),
+                    );
+                    return;
+                  }
                   await Get.toNamed(EmployeeChecksRegisterScreen.route);
                 },
                 child: Text(

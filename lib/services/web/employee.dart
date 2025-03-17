@@ -1,5 +1,10 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+import 'package:employee_checks/lib.dart';
+import 'package:path/path.dart' show basename;
+import 'package:path_provider/path_provider.dart';
 import "dart:async";
-import "package:dio/dio.dart";
 import "package:employee_checks/lib.dart" hide Key;
 
 class EmployeeChecksService extends IWebService {
@@ -44,13 +49,13 @@ class EmployeeChecksService extends IWebService {
 
   // ///////////// AUTHORIZED //////////////////
 
-  Future<bool> scanNow({required String qr}) async {
+  Future<AuthorizationUser?> scanNow({required String qr}) async {
     Dio dio = getDio('ScanNow');
     Map<String, String> dataSent = <String, String>{
       UserEnum.Qr.name: qr,
     };
     try {
-      Response<Object> res = await dio.post(
+      Response<Map<String, Object?>> res = await dio.post(
         '/scan',
         data: dataSent,
         options: Options(
@@ -59,11 +64,16 @@ class EmployeeChecksService extends IWebService {
           },
         ),
       );
-      return res.statusCode == 200;
+      Map<String, Object?>? data = res.data;
+
+      if (data == null) return null;
+      if (res.statusCode == 200) {
+        return AuthorizationUser.fromJson(data);
+      }
     } on Exception catch (e) {
       logg(e, 'scan_result');
     }
-    return false;
+    return null;
   }
 
   Future<AuthorizationUser?> getEmployee({required String username}) async {
@@ -162,6 +172,37 @@ class EmployeeChecksService extends IWebService {
       return false;
     }
   }
+}
+
+Future<File> downloadImage(EmployeeChecksUser user, String url) async {
+  Directory appDirectory = await getApplicationDocumentsDirectory();
+  String path = user.personalInfos.savePath(appDirectory.path);
+  Dio dio = Dio();
+
+  Response<ResponseBody> response = await dio.get<ResponseBody>(
+    url,
+    options: Options(responseType: ResponseType.stream, headers: user.headers),
+  );
+
+  // Extract filename from headers
+  String? contentDisposition = response.headers.value('content-disposition');
+  String fileName = "default.jpg";
+
+  if (contentDisposition != null && contentDisposition.contains('filename=')) {
+    fileName = contentDisposition.split('filename=')[1].replaceAll('"', '');
+  } else {
+    // Extract from URL if header is missing
+    fileName = basename(Uri.parse(url).path);
+  }
+  String savePath = "$path\\$fileName";
+  await dio.download(
+    url,
+    savePath,
+    options: Options(headers: user.headers),
+  );
+
+  logg("Downloaded: $fileName");
+  return File(savePath);
 }
 
 // /api/Transaction/filtered                    // GET

@@ -1,9 +1,8 @@
 import 'dart:math';
 import 'dart:ui';
-import 'dart:async';
 import 'package:employee_checks/lib.dart';
 
-class BorderProgressIndicator extends StatefulWidget {
+class BorderProgressIndicator extends StatelessWidget {
   /// The width of the border
   final double borderWidth;
 
@@ -39,53 +38,26 @@ class BorderProgressIndicator extends StatefulWidget {
 
   final IncomeingQr incomeingQr;
   @override
-  State<BorderProgressIndicator> createState() => _BorderProgressIndicatorState();
-}
-
-class _BorderProgressIndicatorState extends State<BorderProgressIndicator> {
-  Timer? _timer;
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(
-      Durations.short1,
-      (Timer timer) {
-        double? percentage = percent();
-        context.read<EmployeeChecksState>().changePercent = percentage;
-      },
-    );
-  }
-
-  double percent() {
-    Duration difference = DateTime.now().difference(widget.incomeingQr.generated);
-    int inSeconds = difference.inMilliseconds;
-    int lifecyle = widget.incomeingQr.lifecyle_in_seconds * 1000;
-    double v = inSeconds / lifecyle;
-    return 1 - v;
-  }
-
-  @override
-  void dispose() {
-    super /*  */ .dispose();
-    _timer?.cancel();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    double? value = context.watch<EmployeeChecksState>().percent;
-    return Padding(
-      padding: widget.padding,
-      child: CustomPaint(
-        painter: BorderProgressPainter(
-          progress: max(min(1, value ?? 0), 0),
-          borderWidth: widget.borderWidth,
-          progressColor: widget.progressColor,
-          backgroundColor: widget.backgroundColor,
-          borderRadius: widget.borderRadius,
-          clockwise: widget.clockwise,
-        ),
-        child: widget.child,
-      ),
+    return TemporalWidgetBuilder(
+      start: incomeingQr.generated,
+      duration_in_millis: incomeingQr.lifecyle_in_seconds * 1000,
+      builder: (BuildContext context, double? value) {
+        return Padding(
+          padding: padding,
+          child: CustomPaint(
+            painter: BorderProgressPainter(
+              progress: max(min(1, value ?? 0), 0),
+              borderWidth: borderWidth,
+              progressColor: progressColor,
+              backgroundColor: backgroundColor,
+              borderRadius: borderRadius,
+              clockwise: clockwise,
+            ),
+            child: child,
+          ),
+        );
+      },
     );
   }
 }

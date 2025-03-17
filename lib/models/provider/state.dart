@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:employee_checks/lib.dart';
 const int SHOW_SCANNED_USER_IN_MELLIS = 5_000;
 class EmployeeChecksState extends ChangeNotifier {
@@ -23,16 +24,28 @@ class EmployeeChecksState extends ChangeNotifier {
     notifyListeners();
   }
 
+  Set<String> _usersScannedTempIds = <String>{};
+  Set<AuthorizationUser> _usersScanned = <AuthorizationUser>{};
+
+  List<AuthorizationUser> get usersScannedTemp {
+    return _usersScannedTempIds.map((String e) {
+      return _usersScanned.firstWhereOrNull((AuthorizationUser i) => i.id==e,);
+    }).whereType<AuthorizationUser>().toList();
+  }
+
   AuthorizationUser? _userScanned;
   AuthorizationUser? get userScanned => _userScanned;
 
   set incomingUserScan(AuthorizationUser iUser) {
     _userScanned = iUser;
+    _usersScanned.add(iUser);
+    _usersScannedTempIds.add(iUser.id);
     notifyListeners();
     Future<void>.delayed(
       Duration(milliseconds: SHOW_SCANNED_USER_IN_MELLIS),
       () {
         _userScanned = null;
+        _usersScannedTempIds.remove(iUser.id);
         notifyListeners();
       },
     );

@@ -121,7 +121,12 @@ Widget _protectedRoute({
 final Map<String, Widget Function(BuildContext context)> routes = <String, Widget Function(BuildContext context)>{
   // PUBLIC
   EmployeeChecksSettingsView.route: (BuildContext context) => EmployeeChecksSettingsView(),
-  EmployeeChecksRegisterScreen.route: /**********/ (BuildContext context) => EmployeeChecksRegisterScreen(),
+  EmployeeChecksRegisterScreen.route: /**********/ (BuildContext context) {
+    Object? args = ModalRoute.of(context)?.settings.arguments;
+    return EmployeeChecksRegisterScreen(
+      initialValue: (args is AuthorizationUser?) ? args : null,
+    );
+  },
   EmployeeChecksLoginPage.route: (BuildContext context) => EmployeeChecksLoginPage(),
   // EmployeeChecksSplashScreen.route:  (BuildContext context) => EmployeeChecksSplashScreen(),
   // INTERMIEDIATES

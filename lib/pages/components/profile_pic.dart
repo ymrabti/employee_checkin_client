@@ -10,16 +10,7 @@ import 'package:power_geojson/power_geojson.dart';
 
 import 'package:employee_checks/lib.dart';
 
-class MultiXpartFile {
-  XFile xfile;
-  MultipartFile multipartFile;
-  MultiXpartFile({
-    required this.xfile,
-    required this.multipartFile,
-  });
-}
-
-class EmployeeChecksProfilePic extends StatefulWidget {
+class EmployeeChecksProfilePic extends StatelessWidget {
   EmployeeChecksProfilePic({
     super.key,
     required this.width,
@@ -30,21 +21,22 @@ class EmployeeChecksProfilePic extends StatefulWidget {
   final bool showEdit;
 
   @override
-  State<EmployeeChecksProfilePic> createState() => _ProfilePicState();
-}
-
-class _ProfilePicState extends State<EmployeeChecksProfilePic> {
-  final ImagePicker _picker = ImagePicker();
-  @override
   Widget build(BuildContext context) {
     Color background = Theme.of(context).colorScheme.surface;
-    return FormBuilderFieldDecoration<MultiXpartFile>(
+    return FormBuilderFieldDecoration<XFile>(
       name: UserEnum.photo.name,
       validator: FormBuilderValidators.compose(
-        <FormFieldValidator<MultiXpartFile>>[FormBuilderValidators.required()],
+        <FormFieldValidator<XFile>>[FormBuilderValidators.required()],
       ),
-      valueTransformer: (MultiXpartFile? value) => value?.multipartFile.clone(),
-      builder: (FormFieldState<MultiXpartFile> fieldState) {
+      valueTransformer: (XFile? value) {
+        return value == null
+            ? null
+            : MultipartFile.fromFileSync(
+                value.path,
+                filename: basename(value.path),
+              ).clone();
+      },
+      builder: (FormFieldState<XFile> fieldState) {
         return Column(
           spacing: 8.r,
           children: <Widget>[
@@ -54,15 +46,15 @@ class _ProfilePicState extends State<EmployeeChecksProfilePic> {
                 ClipOval(
                   child: Container(
                     color: context.theme.primaryColor,
-                    height: widget.width,
-                    width: widget.width,
+                    height: width,
+                    width: width,
                     child: avatar(
                       url: context.watch<EmployeeChecksState>().user?.personalInfos.photo,
-                      fieldState: fieldState,
+                      pickedFile: fieldState.value,
                     ),
                   ),
                 ),
-                if (widget.width > 100 && widget.showEdit) _UploadPhoto(background, fieldState),
+                if (width > 100 && showEdit) _UploadPhoto(background, fieldState),
               ],
             ),
             if (fieldState.hasError)
@@ -81,16 +73,14 @@ class _ProfilePicState extends State<EmployeeChecksProfilePic> {
   Future<void> _pickImage({
     required ImageSource source,
     required BuildContext context,
-    required FormFieldState<MultiXpartFile> fieldState,
+    required FormFieldState<XFile> fieldState,
     bool pop = true,
   }) async {
     if (pop) Navigator.of(context).pop();
     try {
-      final XFile? pickedFile = await _picker.pickImage(source: source);
+      final XFile? pickedFile = await ImagePicker().pickImage(source: source);
       if (pickedFile != null) {
-        String path = pickedFile.path;
-        MultipartFile photo = await MultipartFile.fromFile(path, filename: basename(path));
-        fieldState.didChange(MultiXpartFile(multipartFile: photo, xfile: pickedFile));
+        fieldState.didChange(pickedFile);
       }
     } catch (e) {
       logg(e);
@@ -102,20 +92,15 @@ class _ProfilePicState extends State<EmployeeChecksProfilePic> {
     } finally {}
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  Builder _UploadPhoto(Color background, FormFieldState<MultiXpartFile> fieldState) {
+  Builder _UploadPhoto(Color background, FormFieldState<XFile> fieldState) {
     return Builder(
       builder: (BuildContext context) {
         return Positioned(
           right: -16,
           bottom: 0,
           child: SizedBox(
-            height: widget.width * .4,
-            width: widget.width * .4,
+            height: width * .4,
+            width: width * .4,
             child: TextButton(
               style: ButtonStyle(
                 backgroundColor: WidgetStateProperty.resolveWith(
@@ -212,10 +197,9 @@ class _ProfilePicState extends State<EmployeeChecksProfilePic> {
   }
 
   Widget avatar({
-    required FormFieldState<MultiXpartFile> fieldState,
+    XFile? pickedFile,
     String? url,
   }) {
-    XFile? pickedFile = fieldState.value?.xfile;
     Widget image = pickedFile == null
         ? ((url == null || url.isEmpty)
             ? //
@@ -223,8 +207,11 @@ class _ProfilePicState extends State<EmployeeChecksProfilePic> {
                 'src/employee_checks.png',
                 fit: BoxFit.cover,
               )
-            : ImagedNetwork(
-                url: url,
+            : Builder(
+                builder: (BuildContext context) {
+                  Widget? img = context.watch<EmployeeChecksState>().user?.personalInfos.imageWidget;
+                  return img ?? SizedBox();
+                },
               ))
         : Image.file(
             File(pickedFile.path),

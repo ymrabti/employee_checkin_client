@@ -1,4 +1,7 @@
+import "dart:io";
+
 import "package:faker/faker.dart";
+import "package:image_picker/image_picker.dart";
 import "package:power_geojson/power_geojson.dart";
 import "package:employee_checks/lib.dart";
 
@@ -12,16 +15,7 @@ enum EmployeeChecksUserRoles {
 class EmployeeChecksUser extends IGenericAppModel {
   AuthorizationUser personalInfos;
   AuthorizationTokens tokens;
-  String get fullName => '${personalInfos.firstName} ${personalInfos.lastName}';
-  Widget get imageWidget {
-    String url = '${EmployeeChecksAuthService().apiUrl}/api/Employees/photo/${personalInfos.username}';
-    return ImagedNetwork(
-      url: url,
-      headers: <String, String>{
-        UserEnum.Authorization.name: 'Bearer ${tokens.access.token}',
-      },
-    );
-  }
+  String get fullName => personalInfos.fullName;
 
   EmployeeChecksUser({
     required this.personalInfos,
@@ -36,6 +30,9 @@ class EmployeeChecksUser extends IGenericAppModel {
     await remove(EmployeeChecksUserEnum.user.name);
   }
 
+  Map<String, String> get headers => <String, String>{
+        UserEnum.Authorization.name: 'Bearer ${tokens.access.token}',
+      };
   EmployeeChecksUser copyWith({
     AuthorizationUser? personalInfos,
     AuthorizationTokens? tokens,
@@ -54,17 +51,11 @@ class EmployeeChecksUser extends IGenericAppModel {
     };
   }
 
-  factory EmployeeChecksUser.random() {
-    return EmployeeChecksUser(
-      personalInfos: AuthorizationUser.random(),
-      tokens: AuthorizationTokens.random(),
-    );
-  }
-
   factory EmployeeChecksUser.fromJson(Map<String, Object?> json) {
+    Map<String, Object?> jsonTokens = json[EmployeeChecksUserEnum.tokens.name] as Map<String, Object?>;
     return EmployeeChecksUser(
       personalInfos: AuthorizationUser.fromJson(json[EmployeeChecksUserEnum.user.name] as Map<String, Object?>),
-      tokens: AuthorizationTokens.fromJson(json[EmployeeChecksUserEnum.tokens.name] as Map<String, Object?>),
+      tokens: AuthorizationTokens.fromJson(jsonTokens),
     );
   }
 
@@ -236,6 +227,7 @@ class AuthorizationUser {
 
   final String photo;
 
+  String imageSavedIn;
   final String id;
   AuthorizationUser({
     required this.role,
@@ -246,16 +238,19 @@ class AuthorizationUser {
     required this.username,
     required this.id,
     required this.photo,
+    this.imageSavedIn = '',
   });
 
+  String get fullName => '$firstName $lastName';
   AuthorizationUser copyWith({
-    String? role,
+    required String path,
     bool? isEmailVerified,
     String? firstName,
     String? lastName,
     String? username,
     String? email,
     String? photo,
+    String? role,
     String? id,
   }) {
     return AuthorizationUser(
@@ -267,8 +262,29 @@ class AuthorizationUser {
       username: username ?? this.username,
       photo: photo ?? this.photo,
       id: id ?? this.id,
+      imageSavedIn: path,
     );
   }
+
+  Widget get imageWidget {
+    return Builder(
+      builder: (BuildContext context) {
+        return ImagedNetwork(
+          url: photoo,
+          headers: context.watch<EmployeeChecksState>().user?.headers,
+        );
+      },
+    );
+  }
+
+  String savePath(String directoryPath) {
+    String dir = '$directoryPath\\Employees\\$username';
+    if (!Directory(dir).existsSync()) Directory(dir).createSync(recursive: true);
+    // return '$dir/${basename(photo)}';
+    return dir;
+  }
+
+  String get photoo => '${EmployeeChecksAuthService().apiUrl}/api/Employees/photo/$username';
 
   Map<String, Object?> toJson() {
     return <String, Object?>{
@@ -278,7 +294,20 @@ class AuthorizationUser {
       UserEnum.lastName.name: lastName,
       UserEnum.email.name: email,
       UserEnum.id.name: id,
-      UserEnum.photo.name: photo,
+      UserEnum.photo.name: imageSavedIn,
+      UserEnum.username.name: username,
+    };
+  }
+
+  Map<String, Object?> toMap() {
+    return <String, Object?>{
+      UserEnum.role.name: role,
+      UserEnum.isEmailVerified.name: isEmailVerified,
+      UserEnum.firstName.name: firstName,
+      UserEnum.lastName.name: lastName,
+      UserEnum.email.name: email,
+      UserEnum.id.name: id,
+      UserEnum.photo.name: XFile(imageSavedIn),
       UserEnum.username.name: username,
     };
   }
