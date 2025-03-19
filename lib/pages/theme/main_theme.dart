@@ -1,13 +1,12 @@
 import "package:flutter/cupertino.dart";
 import "package:flutter/services.dart";
 import "package:employee_checks/lib.dart";
+import "package:google_fonts/google_fonts.dart";
 
 ThemeData EmployeeChecksTheme({required bool dark}) {
   MaterialColor fgColor = dark ? EmployeeChecksColors.textColorDark : EmployeeChecksColors.textColorLight;
   MaterialColor bgColor = dark ? EmployeeChecksColors.textColorLight : EmployeeChecksColors.textColorDark;
-  final TextStyle ts = TextStyle(letterSpacing: 2.7.r, color: fgColor);
-  final TextStyle ier = ts.copyWith(fontFamily: 'InterEmployeeChecksRegular');
-//   final TextStyle ie = ts.copyWith(fontFamily: 'InterEmployeeChecks');
+  //
   Color colorFill = bgColor[dark ? 800 : 300]!;
   Color colorForePrimary = fgColor[!dark ? 800 : 300]!;
   Color colorFore = fgColor[!dark ? 700 : 400]!;
@@ -39,25 +38,29 @@ ThemeData EmployeeChecksTheme({required bool dark}) {
   );
   TextTheme textTheme = TextTheme(
     // Body
-    bodySmall /*$*****/ : ts.copyWith(fontSize: 09.spMin, fontWeight: FontWeight.bold, color: ts.color?.contrast(-30)),
-    bodyMedium /******/ : ts.copyWith(fontSize: 11.spMin, fontWeight: FontWeight.bold),
-    bodyLarge /*$*****/ : ts.copyWith(fontSize: 18.spMin),
-    // Labels   ***********************************************************************************
-    labelSmall /*$****/ : ts.copyWith(fontSize: 11.spMin),
-    labelMedium /*****/ : ts.copyWith(fontSize: 14.spMin),
-    labelLarge /*$****/ : ts.copyWith(fontSize: 18.spMin),
-    // Labels    ***********************************************************************************
-    displaySmall /*$**/ : ts.copyWith(fontSize: 16.spMin),
-    displayMedium /***/ : ts.copyWith(fontSize: 24.spMin),
-    displayLarge /*$**/ : ts.copyWith(fontSize: 32.spMin),
-    // Titles   ***********************************************************************************
-    titleSmall /*$****/ : ier.copyWith(fontSize: 20.spMin),
-    titleMedium /*****/ : ier.copyWith(fontSize: 18.spMin),
-    titleLarge /*$****/ : ier.copyWith(fontSize: 16.spMin),
-    // Headlines   ***********************************************************************************
-    headlineSmall /*$*/ : ier.copyWith(fontSize: 12.spMin),
-    headlineMedium /**/ : ier.copyWith(fontSize: 14.spMin),
-    headlineLarge /*$*/ : ier.copyWith(fontSize: 18.spMin),
+    bodySmall: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w400, letterSpacing: 0.4, color: fgColor),
+    bodyMedium: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w400, letterSpacing: 0.25, color: fgColor),
+    bodyLarge: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.15, color: fgColor),
+
+    // Labels
+    labelSmall: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w500, letterSpacing: 1.5, color: fgColor),
+    labelMedium: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w500, letterSpacing: 1.25, color: fgColor),
+    labelLarge: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500, letterSpacing: 1.1, color: fgColor),
+
+    // Display
+    displaySmall: GoogleFonts.poppins(fontSize: 36, fontWeight: FontWeight.w400, letterSpacing: 0.25, color: fgColor),
+    displayMedium: GoogleFonts.poppins(fontSize: 45, fontWeight: FontWeight.w400, color: fgColor),
+    displayLarge: GoogleFonts.poppins(fontSize: 57, fontWeight: FontWeight.w400, color: fgColor),
+
+    // Titles
+    titleSmall: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: 0.1, color: fgColor),
+    titleMedium: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.15, color: fgColor),
+    titleLarge: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.w600, letterSpacing: 0.2, color: fgColor),
+
+    // Headlines
+    headlineSmall: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.w500, letterSpacing: 0.15, color: fgColor),
+    headlineMedium: GoogleFonts.poppins(fontSize: 28, fontWeight: FontWeight.w500, letterSpacing: 0.2, color: fgColor),
+    headlineLarge: GoogleFonts.poppins(fontSize: 32, fontWeight: FontWeight.w500, letterSpacing: 0.25, color: fgColor),
   );
   double maxWidth = EmployeeChecksPlatform.isPhone ? double.maxFinite : 600.0;
   WidgetStateProperty<double> elevationButton = WidgetStateProperty<double>.fromMap(
@@ -92,8 +95,8 @@ ThemeData EmployeeChecksTheme({required bool dark}) {
     style: ButtonStyle(
       shadowColor: WidgetStatePropertyAll<Color>(fgColor.withValues(alpha: .35)),
       backgroundColor: bgFilledButton,
-      textStyle: WidgetStatePropertyAll<TextStyle>(
-        ts.copyWith(
+      textStyle: WidgetStatePropertyAll<TextStyle?>(
+        textTheme.labelMedium?.copyWith(
           fontFamily: 'InterEmployeeChecks',
           color: fgColor,
           fontSize: 18.spMin,
@@ -320,7 +323,7 @@ ThemeData EmployeeChecksTheme({required bool dark}) {
     ),
 
     dropdownMenuTheme: DropdownMenuThemeData(
-      textStyle: ts.copyWith(fontSize: 13.r),
+      textStyle: textTheme.labelMedium?.copyWith(fontSize: 13.r),
       inputDecorationTheme: InputDecorationTheme(filled: false),
     ),
     // Material

@@ -63,17 +63,101 @@ class ScanBodyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     EmployeeChecksUser? user = context.watch<EmployeeChecksState>().user;
+    List<AuthorizationUser> usersScanned = context.watch<EmployeeChecksState>().usersScannedTemp;
     DateTime dateTime = DateTime.now();
     return user?.personalInfos.role == EmployeeChecksUserRoles.fieldWorker.name //
-        ? fieldWorkerWidget()
-        : UserWidget(personalInfos: user?.personalInfos, start: dateTime);
+        ? EmployeeChecksResponsiveWidget(
+            builder: (bool isPortrait, Animation<double> fa, Animation<Offset> sa) {
+              return SlideFadeTransition(
+                fadeAnimation: fa,
+                slideAnimation: sa,
+                child: fieldWorkerWidget(),
+              );
+            },
+            medium: (Animation<double> fa, Animation<Offset> sa) {
+              return Row(
+                children: <Widget>[
+                  SlideFadeTransition(
+                    fadeAnimation: fa,
+                    slideAnimation: sa,
+                    child: fieldWorkerWidget(false),
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: <Widget>[
+                          for (AuthorizationUser e in usersScanned) _item(e),
+                        ],
+                      ),
+                    ),
+                  ),
+                  /* Expanded(
+                    child: SizedBox(
+                      height: MediaQuery.sizeOf(context).height,
+                      child: AnimatedList(
+                        primary: true,
+                        initialItemCount: usersScanned.length,
+                        itemBuilder: (BuildContext context, int index, Animation<double> animation) {
+                          AuthorizationUser e = usersScanned.elementAt(index);
+                          return SlideTransition(
+                            position: Tween<Offset>(
+                              begin: const Offset(1, 0),
+                              end: Offset.zero,
+                            ).animate(animation),
+                            child: _item(e),
+                          );
+                        },
+                      ),
+                    ),
+                  ), */
+                ],
+              );
+            },
+          )
+        : UserWidget(personalInfos: user?.personalInfos, start: dateTime, autoBack: false);
   }
 
-  Widget fieldWorkerWidget() {
+  Widget _item(AuthorizationUser e) {
+    return Builder(
+      builder: (BuildContext context) {
+        DateTime now = DateTime.now();
+        return Container(
+          constraints: BoxConstraints(maxWidth: 450),
+          margin: EdgeInsets.all(12.0.r),
+          decoration: BoxDecoration(
+            color: context.theme.backgroundColor.contrast(20),
+            borderRadius: BorderRadius.circular(16.r),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                spreadRadius: .5,
+                blurRadius: 6,
+                color: context.theme.foregroundColor.withValues(alpha: 128),
+              ),
+            ],
+          ),
+          padding: EdgeInsets.all(8.r),
+          child: Column(
+            spacing: 18.r,
+            children: <Widget>[
+              UserWidget(
+                personalInfos: e,
+                start: now,
+                autoBack: false,
+                columnView: false,
+              ),
+              Text(e.fullName),
+              Text(e.email),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget fieldWorkerWidget([bool isSmall = true]) {
     return Center(
       child: Builder(
         builder: (BuildContext context) {
-          EmployeeChecksUser? user = context.watch<EmployeeChecksState>().user;
           IncomeingQr? incomingQrData = context.watch<EmployeeChecksState>().qr;
           AuthorizationUser? userScanned = context.watch<EmployeeChecksState>().userScanned;
           double radius = 12.r;
@@ -86,8 +170,14 @@ class ScanBodyScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     spacing: 12.r,
                     children: <Widget>[
-                      if (userScanned == null) qrShowWidget(incomingQrData, radius, borderWidth),
-                      if (userScanned != null && user != null) UserWidget(start: dateTime, personalInfos: userScanned),
+                      if (!isSmall || userScanned == null)
+                        qrShowWidget(incomingQrData, radius, borderWidth)
+                      else
+                        UserWidget(
+                          start: dateTime,
+                          personalInfos: userScanned,
+                          autoBack: false,
+                        ),
                     ],
                   ),
           );

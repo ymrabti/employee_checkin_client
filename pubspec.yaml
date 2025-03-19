@@ -43,7 +43,9 @@ dependencies:
     path: ^1.9.0
     nested: ^1.0.0
     path_provider: ^2.1.5
-    audioplayers: ^6.4.0
+    just_audio: ^0.9.46
+    volume_controller: ^3.3.2
+    google_fonts: ^6.2.1
 
 dev_dependencies:
     flutter_test:
@@ -58,6 +60,7 @@ flutter:
     generate: true
     uses-material-design: true
     assets:
+        - assets/
         - src/
         - .env
 

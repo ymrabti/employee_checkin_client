@@ -28,15 +28,16 @@ class EmployeeChecksState extends ChangeNotifier {
   Set<AuthorizationUser> _usersScanned = <AuthorizationUser>{};
 
   List<AuthorizationUser> get usersScannedTemp {
+    // List<AuthorizationUser> list = List<AuthorizationUser>.generate(10, (int index) => AuthorizationUser.random(),);
     return _usersScannedTempIds.map((String e) {
       return _usersScanned.firstWhereOrNull((AuthorizationUser i) => i.id==e,);
-    }).whereType<AuthorizationUser>().toList();
+    }).whereType<AuthorizationUser>().toList()/* ..addAll(list) */;
   }
 
   AuthorizationUser? _userScanned;
   AuthorizationUser? get userScanned => _userScanned;
 
-  set incomingUserScan(AuthorizationUser iUser) {
+  void incomingUserScan(AuthorizationUser iUser) {
     _userScanned = iUser;
     _usersScanned.add(iUser);
     _usersScannedTempIds.add(iUser.id);
@@ -58,6 +59,12 @@ class EmployeeChecksState extends ChangeNotifier {
   }
 
   EmployeeChecksUser? user;
+
+  Future<void> updatePhoto(String path) async {
+    user?.personalInfos.imageSavedIn = path;
+    await user?.saveUser(encryptKey);
+    notifyListeners();
+  }
 
   Future<void> setUserConnected(EmployeeChecksUser? newUser) async {
     user = newUser;

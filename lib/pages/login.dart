@@ -176,7 +176,7 @@ class _EmployeeChecksLoginPageState extends State<EmployeeChecksLoginPage> {
             initialValue: kDebugMode
                 ? AuthorizationUser.random()
                     .copyWith(
-                      path: '',
+                      imageSavedIn: '',
                       username: 'waelchiangelica',
                     )
                     .toMap()
@@ -235,7 +235,7 @@ class _EmployeeChecksLoginPageState extends State<EmployeeChecksLoginPage> {
           slideAnimation: slideAnimation,
           child: Text(
             context.tr.loginButtonText,
-            style: context.theme.primaryTextTheme.displayLarge,
+            style: context.theme.primaryTextTheme.titleLarge,
             textAlign: TextAlign.center,
           ),
         );
@@ -266,7 +266,7 @@ class _EmployeeChecksLoginPageState extends State<EmployeeChecksLoginPage> {
                     );
                     await Get.toNamed(
                       EmployeeChecksRegisterScreen.route,
-                      arguments: user.copyWith(path: join(file.path)),
+                      arguments: user.copyWith(imageSavedIn: join(file.path)),
                     );
                     return;
                   }

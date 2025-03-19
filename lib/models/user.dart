@@ -30,9 +30,8 @@ class EmployeeChecksUser extends IGenericAppModel {
     await remove(EmployeeChecksUserEnum.user.name);
   }
 
-  Map<String, String> get headers => <String, String>{
-        UserEnum.Authorization.name: 'Bearer ${tokens.access.token}',
-      };
+  Map<String, String> get headers => tokens.headers;
+
   EmployeeChecksUser copyWith({
     AuthorizationUser? personalInfos,
     AuthorizationTokens? tokens,
@@ -101,6 +100,9 @@ class AuthorizationTokens {
     );
   }
 
+  Map<String, String> get headers => <String, String>{
+        UserEnum.Authorization.name: 'Bearer ${access.token}',
+      };
   bool get refreshTokenValid => refresh.expires.isAfter(DateTime.now().toUtc());
 
   bool get accessTokenValid => access.expires.isAfter(DateTime.now().toUtc());
@@ -243,7 +245,7 @@ class AuthorizationUser {
 
   String get fullName => '$firstName $lastName';
   AuthorizationUser copyWith({
-    required String path,
+    required String imageSavedIn,
     bool? isEmailVerified,
     String? firstName,
     String? lastName,
@@ -262,7 +264,7 @@ class AuthorizationUser {
       username: username ?? this.username,
       photo: photo ?? this.photo,
       id: id ?? this.id,
-      imageSavedIn: path,
+      imageSavedIn: imageSavedIn,
     );
   }
 

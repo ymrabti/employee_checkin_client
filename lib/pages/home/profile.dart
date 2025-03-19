@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:employee_checks/lib.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:get/get.dart' hide MultipartFile;
+import 'package:image_picker/image_picker.dart';
 
 class EmployeeChecksPersonalInfos extends StatefulWidget {
   const EmployeeChecksPersonalInfos({
@@ -40,6 +43,7 @@ class _EmployeeChecksPersonalInfosState extends State<EmployeeChecksPersonalInfo
   Widget build(BuildContext context) {
     AuthorizationUser? Function(BuildContext)? fn = widget.initialValue;
     AuthorizationUser? initialValue = fn == null ? null : fn(context);
+    AuthorizationUser? pi = context.watch<EmployeeChecksState>().user?.personalInfos;
     return Scaffold(
       body: TypicalCenteredResponsive(
         child: Padding(
@@ -49,23 +53,32 @@ class _EmployeeChecksPersonalInfosState extends State<EmployeeChecksPersonalInfo
               spacing: 12.r,
               children: <Widget>[
                 Gap(12.r),
-                if (!widget.isRegister) SoloPictureForm(child: _pic()),
+                if (!widget.isRegister)
+                  SoloPictureForm(
+                    child: EmployeeChecksProfilePic(
+                      width: 150,
+                      showEdit: true,
+                    ),
+                  ),
                 FormBuilder(
                   key: _formKey,
                   initialValue: initialValue?.toMap() ?? <String, Object?>{},
                   child: Column(
                     spacing: 18.r,
                     children: <Widget>[
+                      Text(
+                        widget.isRegister ? context.tr.quick_registration : pi?.username ?? '',
+                        textAlign: TextAlign.center,
+                        style: context.theme.primaryTextTheme.titleLarge,
+                      ),
                       if (widget.isRegister)
-                        Text(
-                          context.tr.quick_registration,
-                          textAlign: TextAlign.center,
-                          style: context.theme.primaryTextTheme.displayLarge,
+                        EmployeeChecksProfilePic(
+                          width: 150,
+                          showEdit: true,
                         ),
-                      if (widget.isRegister) _pic(),
                       _fullName(),
+                      if (widget.isRegister) EmployeeChecksFieldUsername(),
                       EmployeeChecksFieldEmail(),
-                      EmployeeChecksFieldUsername(),
                       if (widget.isRegister)
                         EmployeeChecksFieldPassword(
                           name: UserEnum.password.name,
@@ -109,8 +122,6 @@ class _EmployeeChecksPersonalInfosState extends State<EmployeeChecksPersonalInfo
       ),
     );
   }
-
-  EmployeeChecksProfilePic _pic() => EmployeeChecksProfilePic(width: 150, showEdit: true);
 
   Center haveNoAccountPrompt(BuildContext context) {
     return Center(
@@ -183,12 +194,21 @@ class _SoloPictureFormState extends State<SoloPictureForm> {
   final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
   @override
   Widget build(BuildContext context) {
-    AuthorizationUser? pi = context.watch<EmployeeChecksState>().user?.personalInfos;
+    EmployeeChecksUser? user = context.watch<EmployeeChecksState>().user;
+    AuthorizationUser? pi = user?.personalInfos;
     return FormBuilder(
       key: _formKey,
       initialValue: pi?.toMap() ?? <String, Object>{},
       onChanged: () async {
-        logg(_formKey.currentState?.instantValue);
+        if (user == null) return;
+        _formKey.validateSave();
+        EmployeeChecksService service = EmployeeChecksService(context: context, auth: user.tokens);
+        XFile? field = _formKey.currentState?.fields[UserEnum.photo.name]?.value;
+        if (field == null) return;
+        UploadPhotoResponse? res = await service.updateProfilePicture(MultipartFile.fromFileSync(field.path));
+        if (res == null) return;
+        File file = await downloadImage(user, user.personalInfos.photoo, res.file.filename);
+        await context.read<EmployeeChecksState>().updatePhoto(file.path);
       },
       child: widget.child,
     );

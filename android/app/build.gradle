@@ -54,59 +54,10 @@ android {
         versionName flutterVersionName
     }
 
-    if(keystorePropertiesFile.exists()) {
-        signingConfigs {
-            if (System.getenv("ANDROID_KEYSTORE_PATH")) {
-                release {
-                    storeFile file(System.getenv("ANDROID_KEYSTORE_PATH"))
-                    keyAlias System.getenv("ANDROID_KEYSTORE_ALIAS")
-                    keyPassword System.getenv("ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD")
-                    storePassword System.getenv("ANDROID_KEYSTORE_PASSWORD")
-                }
-            } else {
-                release {
-                    keyAlias keystoreProperties['keyAlias']
-                    keyPassword keystoreProperties['keyPassword']
-                    storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-                    storePassword keystoreProperties['storePassword']
-                }
-            }
-        }
-    }
-
-    flavorDimensions "default"
-    productFlavors { 
-        production {
-            dimension "default"
-            applicationIdSuffix ""
-            manifestPlaceholders = [appName: "Employee Checks"]
-        }
-        staging {
-            dimension "default"
-            applicationIdSuffix ".stg"
-            manifestPlaceholders = [appName: "[STG] Employee Checks"]
-        }
-        development {
-            dimension "default"
-            applicationIdSuffix ".dev"
-            manifestPlaceholders = [appName: "[DEV] Employee Checks"]
-        }
-    }
 
     buildTypes {
-        if(keystorePropertiesFile.exists()) {
-            release {
-                signingConfig signingConfigs.release
-                minifyEnabled true
-                proguardFiles getDefaultProguardFile('proguard-android.txt')
-            }
-        } else {
-            release {
-                signingConfig signingConfigs.debug
-            }
-        }
-        debug {
-            signingConfig signingConfigs.debug
+        release {
+            signingConfig = signingConfigs.debug
         }
     }
 }

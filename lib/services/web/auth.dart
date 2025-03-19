@@ -3,8 +3,6 @@ import "dart:io";
 import "package:dio/dio.dart";
 import "package:employee_checks/lib.dart" hide Key;
 import "package:get/get.dart" hide Response, FormData, MultipartFile;
-import "package:image_picker/image_picker.dart";
-import "package:path/path.dart";
 // import "package:flutter_windowmanager/flutter_windowmanager.dart";
 
 class EmployeeChecksAuthService extends IWebService {
@@ -84,67 +82,6 @@ class EmployeeChecksAuthService extends IWebService {
   }
 
   // //////////////////////// /////////////////////////
-  Future<void> uploadFileWithData({
-    required File file,
-    required String name,
-    required String email,
-    required String description,
-  }) async {
-    try {
-      FormData formData = FormData.fromMap(<String, Object>{
-        "name": name,
-        "email": email,
-        "description": description,
-        "photo": await MultipartFile.fromFile(file.path, filename: basename(file.path)),
-      });
-
-      Dio _dio = getDio();
-      Response<Map<String, Object?>> response = await _dio.post(
-        '/Register',
-        data: formData,
-        options: Options(
-          headers: <String, Object?>{"Content-Type": "multipart/form-data"},
-        ),
-      );
-
-      logg("Upload successful: ${response.data}");
-    } catch (e) {
-      logg("Error uploading file: $e");
-    }
-  }
-
-  Future<void> pickAndUploadFile() async {
-    final ImagePicker _picker = ImagePicker();
-    ImageSource? imageSource = await Get.dialog<ImageSource>(
-      Dialog.fullscreen(
-        child: Container(
-          decoration: BoxDecoration(
-            color: Get.context?.theme.primaryColor,
-          ),
-        ),
-      ),
-      barrierColor: Get.context?.theme.primaryColor.withValues(alpha: 0.24),
-      barrierDismissible: true,
-    );
-    if (imageSource == null) return;
-    final XFile? image = await _picker.pickImage(source: imageSource);
-
-    if (image != null) {
-      File file = File(image.path);
-
-      // Sample key-value data
-      String name = "John Doe";
-      String email = "john@example.com";
-      String description = "Sample description text";
-
-      await uploadFileWithData(
-        file: file,
-        name: name,
-        email: email,
-        description: description,
-      );
-    }
-  }
 
   Future<EmployeeChecksUser?> register({
     required Map<String, Object?>? data,
@@ -210,9 +147,9 @@ class EmployeeChecksAuthService extends IWebService {
     if (personalInfos != null) {
       EmployeeChecksUser user = EmployeeChecksUser(tokens: tokens, personalInfos: personalInfos);
       File file = await downloadImage(user, user.personalInfos.photoo);
-      EmployeeChecksUser copyWith = user.copyWith(personalInfos: personalInfos.copyWith(path: file.path));
+      EmployeeChecksUser copyWith = user.copyWith(personalInfos: personalInfos.copyWith(imageSavedIn: file.path));
       context.setUserConnected(copyWith);
-      context.read<EmployeeChecksRealtimeState>().updateSocket(user: copyWith);
+      context.read<EmployeeChecksRealtimeState>().updateSocket(tokens: copyWith.tokens);
       await Get.offNamedUntil(route, (Route<void> route) => false);
     } else {
       context.hideCurrentAndShowSnackbar(

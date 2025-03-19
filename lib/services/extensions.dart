@@ -207,7 +207,7 @@ extension ContextX on BuildContext {
 
   Future<void> logOut() async {
     await read<EmployeeChecksState>().disconnect();
-    read<EmployeeChecksRealtimeState>().updateSocket(user: null);
+    read<EmployeeChecksRealtimeState>().updateSocket(tokens: null);
     Get.offNamedUntil(
       EmployeeChecksLoginPage.route,
       (Route<void> route) => false,

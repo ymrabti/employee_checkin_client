@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:get/get.dart' hide MultipartFile;
 import 'package:image_picker/image_picker.dart';
@@ -196,17 +197,11 @@ class EmployeeChecksProfilePic extends StatelessWidget {
     );
   }
 
-  Widget avatar({
-    XFile? pickedFile,
-    String? url,
-  }) {
+  Widget avatar({XFile? pickedFile, String? url}) {
     Widget image = pickedFile == null
         ? ((url == null || url.isEmpty)
             ? //
-            Image.asset(
-                'src/employee_checks.png',
-                fit: BoxFit.cover,
-              )
+            FittedBox(child: Icon(CupertinoIcons.person_circle_fill))
             : Builder(
                 builder: (BuildContext context) {
                   Widget? img = context.watch<EmployeeChecksState>().user?.personalInfos.imageWidget;
@@ -246,14 +241,12 @@ class EmployeeChecksProfilePic extends StatelessWidget {
                 ),
               );
             } else {
-              return Scaffold(
-                body: Center(
-                  child: SizedBox(
-                    width: 35,
-                    height: 35,
-                    child: CircularProgressIndicator.adaptive(
-                      value: animati.value,
-                    ),
+              return Center(
+                child: SizedBox(
+                  width: 35,
+                  height: 35,
+                  child: CircularProgressIndicator.adaptive(
+                    value: animati.value,
                   ),
                 ),
               );
@@ -298,8 +291,12 @@ class ImagedNetwork extends StatelessWidget {
   ImagedNetwork({
     super.key,
     required this.url,
+    this.w = 120.0,
+    this.h = 120.0,
     this.headers,
   });
+  final double w;
+  final double h;
   final String url;
   final Map<String, String>? headers;
   @override
@@ -309,6 +306,8 @@ class ImagedNetwork extends StatelessWidget {
         url,
         headers: headers,
       ),
+      width: w,
+      height: h,
       fit: BoxFit.cover,
       errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
         return Center(
@@ -325,15 +324,17 @@ class ImagedNetwork extends StatelessWidget {
       loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
         if (loadingProgress == null) return child;
         int? expectedTotalBytes = loadingProgress.expectedTotalBytes;
-        return Center(
-          child: CircularProgressIndicator(
-            value: expectedTotalBytes != null ? (loadingProgress.cumulativeBytesLoaded / expectedTotalBytes) : null,
+        return SizedBox(
+          width: w,
+          height: h,
+          child: Center(
+            child: CircularProgressIndicator.adaptive(
+              value: expectedTotalBytes != null ? (loadingProgress.cumulativeBytesLoaded / expectedTotalBytes) : null,
+            ),
           ),
         );
       },
       alignment: Alignment.center,
-      width: 120.0,
-      height: 120.0,
     );
   }
 }

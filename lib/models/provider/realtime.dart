@@ -3,14 +3,13 @@ import 'package:socket_io_client/socket_io_client.dart';
 import 'package:employee_checks/lib.dart';
 
 class EmployeeChecksRealtimeState extends ChangeNotifier {
-  void updateSocket({EmployeeChecksUser? user}) {
-    AuthorizationTokens? tokens = user?.tokens;
-    if (user == null || tokens == null) {
+  void updateSocket({AuthorizationTokens? tokens}) {
+    if (tokens == null) {
       disconnectSocket();
       return;
     }
     if (tokens.accessTokenValid || (socket?.disconnected ?? true)) {
-      final Socket sock = RealtimeConnectivity.getSocketIO(user);
+      final Socket sock = RealtimeConnectivity.getSocketIO(tokens);
       socket = null;
       notifyListeners();
       socket = sock;
@@ -52,13 +51,18 @@ class EmployeeChecksRealtimeState extends ChangeNotifier {
       notifyListeners();
     });
     socket?.onReconnectAttempt((_) async {
-      /* AuthorizationUser? user = Get.context?.read<AppState>().userConnected;
-      await Get.context?.read<AppState>().refreshTokens(user?.auth);
-      AuthorizationUser? userPost = Get.context?.read<AppState>().userConnected;
-      updateSocket(auth: userPost?.auth); */
       buttonColor = Colors.yellow;
       notifyListeners();
     });
+    socket?.on(
+      SocketListenEvents.JWT_EXPIRED,
+      (Object? _) async {
+        logg('JWT EXPIRED FROM SERVER');
+        EmployeeChecksUser? user = Get.context?.read<EmployeeChecksState>().user;
+        AuthorizationTokens? newTokens = await EmployeeChecksAuthService().refreshToken(user?.tokens);
+        updateSocket(tokens: newTokens);
+      },
+    );
     socket?.on(
       SocketListenEvents.QR_STREAM,
       (Object? message) async {
@@ -71,7 +75,7 @@ class EmployeeChecksRealtimeState extends ChangeNotifier {
       (Object? message) async {
         if (message == null) return;
         AuthorizationUser userScanned = AuthorizationUser.fromJson(message as Map<String, Object?>);
-        Get.context?.read<EmployeeChecksState>().incomingUserScan = userScanned;
+        Get.context?.read<EmployeeChecksState>().incomingUserScan(userScanned);
       },
     );
   }
@@ -82,6 +86,7 @@ class EmployeeChecksRealtimeState extends ChangeNotifier {
 }
 
 abstract class SocketListenEvents {
+  static const String JWT_EXPIRED = 'JWT_EXPIRED';
   static const String QR_STREAM = 'QR_STREAM';
   static const String QR_SCANNE = 'QR_SCANNE';
   static const String DISCONNECT = 'disconnect';

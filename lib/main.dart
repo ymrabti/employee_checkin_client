@@ -5,6 +5,7 @@ import "package:flutter_localizations/flutter_localizations.dart" show GlobalCup
 import "package:employee_checks/lib.dart";
 import "package:get/get.dart";
 import "package:nested/nested.dart";
+import "package:volume_controller/volume_controller.dart";
 import "package:wakelock_plus/wakelock_plus.dart" show WakelockPlus;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -13,7 +14,9 @@ Future<void> main() async {
   if (!kIsWeb && (Platform.isAndroid || Platform.isIOS) && kDebugMode) {
     await WakelockPlus.enable();
   }
-
+  VolumeController.instance.getVolume().then((double volume) {
+    logg("Current Volume: $volume");
+  });
   // if (kDebugMode) await Future<void>.delayed(Duration(seconds: 4));
   // await EmployeeChecksLocalServices.clearAll();
 
