@@ -302,12 +302,10 @@ class ImagedNetwork extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Image(
-      image: NetworkImage(
-        url,
-        headers: headers,
-      ),
+      image: NetworkImage(url, headers: headers),
       width: w,
       height: h,
+      alignment: Alignment.center,
       fit: BoxFit.cover,
       errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
         return Center(
@@ -334,7 +332,6 @@ class ImagedNetwork extends StatelessWidget {
           ),
         );
       },
-      alignment: Alignment.center,
     );
   }
 }

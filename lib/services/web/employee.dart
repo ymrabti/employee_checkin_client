@@ -86,9 +86,7 @@ class EmployeeChecksService extends IWebService {
         '/search',
         queryParameters: dataSent,
         options: Options(
-          headers: <String, Object?>{
-            UserEnum.Authorization.name: 'Bearer ${auth?.access.token}',
-          },
+          headers: auth?.headers,
         ),
       );
       Map<String, Object?>? data = res.data;

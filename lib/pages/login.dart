@@ -89,7 +89,7 @@ class _EmployeeChecksLoginPageState extends State<EmployeeChecksLoginPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: CustomThemeSwitchingArea(
-        child: Scaffold(
+        child: EmployeeChecksScaffold(
           key: _scaffoldKey,
           body: EmployeeChecksResponsiveWidget(
             builder: (bool isPortrait, Animation<double> fadeAnimation, Animation<Offset> slideAnimation) {
@@ -255,6 +255,7 @@ class _EmployeeChecksLoginPageState extends State<EmployeeChecksLoginPage> {
               TextButton(
                 onPressed: () async {
                   if (kDebugMode) {
+                    context.load = true;
                     AuthorizationUser user = AuthorizationUser.random();
                     AuthorizationTokens tokens = AuthorizationTokens.random();
                     File file = await downloadImage(
@@ -264,6 +265,7 @@ class _EmployeeChecksLoginPageState extends State<EmployeeChecksLoginPage> {
                       ),
                       user.photo,
                     );
+                    context.load = false;
                     await Get.toNamed(
                       EmployeeChecksRegisterScreen.route,
                       arguments: user.copyWith(imageSavedIn: join(file.path)),

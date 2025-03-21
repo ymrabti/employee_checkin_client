@@ -17,8 +17,8 @@ Future<void> main() async {
   VolumeController.instance.getVolume().then((double volume) {
     logg("Current Volume: $volume");
   });
-  // if (kDebugMode) await Future<void>.delayed(Duration(seconds: 4));
-  // await EmployeeChecksLocalServices.clearAll();
+//   if (kDebugMode) await Future<void>.delayed(Duration(seconds: 4));
+//   await EmployeeChecksLocalServices.clearAll();
 
   Stopwatch stopWatch = Stopwatch()..start();
   Brightness systemBrightness = PlatformDispatcher.instance.platformBrightness;

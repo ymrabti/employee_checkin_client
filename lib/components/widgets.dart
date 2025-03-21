@@ -37,8 +37,13 @@ class EmployeeChecksWaiter extends StatelessWidget {
 
 // flutter pub run import_sorter:main
 class EmployeeChecksScaffold extends StatelessWidget {
-  const EmployeeChecksScaffold({super.key, this.body, this.appBar, this.backgroundColor});
-  final Widget? body;
+  const EmployeeChecksScaffold({
+    super.key,
+    required this.body,
+    this.appBar,
+    this.backgroundColor,
+  });
+  final Widget body;
   final PreferredSizeWidget? appBar;
   final Color? backgroundColor;
   @override
@@ -47,7 +52,12 @@ class EmployeeChecksScaffold extends StatelessWidget {
     return Scaffold(
       appBar: appBar,
       backgroundColor: backgroundColor,
-      body: loading ? EmployeeChecksWaiter() : body,
+      body: Stack(
+        children: <Widget>[
+          body,
+          if (loading) EmployeeChecksWaiter(),
+        ],
+      ),
     );
   }
 }

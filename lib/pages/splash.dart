@@ -42,7 +42,6 @@ class _EmployeeChecksSplashScreenState extends State<EmployeeChecksSplashScreen>
 
     if (pers == null) return;
     EmployeeChecksUser updatedUser = newUser.copyWith(personalInfos: pers);
-    logg(updatedUser.personalInfos.photoo);
     File file = await downloadImage(updatedUser, updatedUser.personalInfos.photoo);
     await context.setUserConnected(updatedUser.copyWith(personalInfos: updatedUser.personalInfos.copyWith(imageSavedIn: file.path)));
     context.read<EmployeeChecksRealtimeState>().updateSocket(tokens: newUser.tokens);
